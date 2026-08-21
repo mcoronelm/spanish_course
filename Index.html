@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<!-- Cargamos la API IFrame de YouTube -->
+<script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -15,10 +17,10 @@
 <header class="site-header">
   <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
   <h1>
-  <a href="index.html" class="logo-link">
-    Mundo <span>ELE</span>
-  </a>
-</h1>
+    <a href="index.html" class="logo-link">
+      Mundo <span>ELE</span>
+    </a>
+  </h1>
   <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
 </header>
 
@@ -83,50 +85,46 @@
 
         <div class="carousel-viewport">
           <div class="carousel-track" id="carouselTrack">
-
-<!--             
-              SLIDE 1 — PLACEHOLDER
-              Reemplazar al incorporar el contenido real: -->
-                URL del video:      https://youtu.be/VMyWIigTGqs?si=BHwm2G9UkTaBo-R6
-                Thumbnail:          [INSERTAR URL DE IMAGEN AQUÍ]
-                Título:             (ya incluido abajo, editable)
-                Descripción:        (ya incluida abajo, editable)
-                Fuente / atribución:[INSERTAR FUENTE / CRÉDITOS AQUÍ]
-           
+            
+            <!-- SLIDE 1 -->
             <article class="slide" aria-label="1 de 5">
-              <div class="video-placeholder" data-video-url="" data-thumbnail="" data-source="">
-                <div class="play-icon" aria-hidden="true">▶</div>
-                <div class="ph-label mono">VIDEO_PLACEHOLDER_1</div>
+              <div class="video-container">
+                <!-- Se le agrega ?enablejsapi=1 a la URL -->
+                <iframe 
+                    width="100%" 
+                    height="350" 
+                    src="https://www.youtube.com/embed/VMyWIigTGqs?enablejsapi=1" 
+                    title="Los ritmos latinoamericanos, un llamado ancestral" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                  </iframe>
               </div>
               <span class="slide-category mono">MÚSICA</span>
               <h3>Ritmos de Hispanoamérica</h3>
               <p>Una introducción a los géneros musicales que definen la identidad sonora de la región, desde el son hasta la cumbia.</p>
-              <a class="btn" href="#" data-role="ver-video">Ver video</a>
+              <a class="btn" href="https://www.youtube.com/watch?v=VMyWIigTGqs" target="_blank" rel="noopener" data-role="ver-video">Ver video</a>
             </article>
 
-            <!--
-              SLIDE 2 — PLACEHOLDER
-              URL del video:      [INSERTAR URL AQUÍ]
-              Thumbnail:          [INSERTAR URL DE IMAGEN AQUÍ]
-              Fuente / atribución:[INSERTAR FUENTE / CRÉDITOS AQUÍ]
-            -->
+            <!-- SLIDE 2 -->
             <article class="slide" aria-label="2 de 5">
-              <div class="video-placeholder" data-video-url="" data-thumbnail="" data-source="">
-                <div class="play-icon" aria-hidden="true">▶</div>
-                <div class="ph-label mono">VIDEO_PLACEHOLDER_2</div>
-              </div>
+                <!-- Se le agrega ?enablejsapi=1 a la URL -->
+                <iframe 
+                    width="100%" 
+                    height="350" 
+                    src="https://www.youtube.com/embed/2tnOC3hrOc0?enablejsapi=1" 
+                    title="Los ritmos latinoamericanos, un llamado ancestral" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                  </iframe>
               <span class="slide-category mono">DANZA</span>
               <h3>Danzas tradicionales</h3>
               <p>Del tango argentino al joropo llanero, un vistazo a las danzas que cuentan la historia de sus pueblos.</p>
               <a class="btn" href="#" data-role="ver-video">Ver video</a>
             </article>
 
-            <!--
-              SLIDE 3 — PLACEHOLDER
-              URL del video:      [INSERTAR URL AQUÍ]
-              Thumbnail:          [INSERTAR URL DE IMAGEN AQUÍ]
-              Fuente / atribución:[INSERTAR FUENTE / CRÉDITOS AQUÍ]
-            -->
+            <!-- SLIDE 3 -->
             <article class="slide" aria-label="3 de 5">
               <div class="video-placeholder" data-video-url="" data-thumbnail="" data-source="">
                 <div class="play-icon" aria-hidden="true">▶</div>
@@ -138,12 +136,7 @@
               <a class="btn" href="#" data-role="ver-video">Ver video</a>
             </article>
 
-            <!--
-              SLIDE 4 — PLACEHOLDER
-              URL del video:      [INSERTAR URL AQUÍ]
-              Thumbnail:          [INSERTAR URL DE IMAGEN AQUÍ]
-              Fuente / atribución:[INSERTAR FUENTE / CRÉDITOS AQUÍ]
-            -->
+            <!-- SLIDE 4 -->
             <article class="slide" aria-label="4 de 5">
               <div class="video-placeholder" data-video-url="" data-thumbnail="" data-source="">
                 <div class="play-icon" aria-hidden="true">▶</div>
@@ -155,12 +148,7 @@
               <a class="btn" href="#" data-role="ver-video">Ver video</a>
             </article>
 
-            <!--
-              SLIDE 5 — PLACEHOLDER
-              URL del video:      [INSERTAR URL AQUÍ]
-              Thumbnail:          [INSERTAR URL DE IMAGEN AQUÍ]
-              Fuente / atribución:[INSERTAR FUENTE / CRÉDITOS AQUÍ]
-            -->
+            <!-- SLIDE 5 -->
             <article class="slide" aria-label="5 de 5">
               <div class="video-placeholder" data-video-url="" data-thumbnail="" data-source="">
                 <div class="play-icon" aria-hidden="true">▶</div>
@@ -194,11 +182,41 @@
 </footer>
 
 <script>
+// Variables globales para controlar la reproducción de videos YouTube
+var isVideoPlaying = false;
+var stopAutoplayGlobal = null;
+var startAutoplayGlobal = null;
+
+// Esta función la ejecuta automáticamente la API de YouTube al cargar
+function onYouTubeIframeAPIReady() {
+  var iframes = document.querySelectorAll('iframe');
+  iframes.forEach(function(iframe) {
+    new YT.Player(iframe, {
+      events: {
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  });
+}
+
+function onPlayerStateChange(event) {
+  // YT.PlayerState.PLAYING equivale a 1
+  if (event.data === YT.PlayerState.PLAYING) {
+    isVideoPlaying = true;
+    if (stopAutoplayGlobal) stopAutoplayGlobal();
+  } 
+  // YT.PlayerState.PAUSED (2) o YT.PlayerState.ENDED (0)
+  else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+    isVideoPlaying = false;
+    if (startAutoplayGlobal) startAutoplayGlobal();
+  }
+}
+
 (function(){
   "use strict";
 
   /* =========================================================
-     NAVBAR: dropdowns con hover en desktop y click/tap en móvil
+     NAVBAR
   ========================================================= */
   var navItems = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
   var isTouchOrNoHover = window.matchMedia('(hover: none), (pointer: coarse)').matches;
@@ -228,7 +246,6 @@
   navItems.forEach(function(item){
     var toggle = item.querySelector('.nav-toggle');
 
-    // Click / tap: siempre disponible como respaldo fiable en cualquier dispositivo
     toggle.addEventListener('click', function(e){
       e.stopPropagation();
       var willOpen = !item.classList.contains('open');
@@ -240,7 +257,6 @@
       }
     });
 
-    // Hover: solo en dispositivos con puntero fino (desktop)
     if(!isTouchOrNoHover){
       item.addEventListener('mouseenter', function(){
         closeAll(item);
@@ -251,7 +267,6 @@
       });
     }
 
-    // Teclado: Escape cierra y devuelve el foco al botón
     item.addEventListener('keydown', function(e){
       if(e.key === 'Escape'){
         closeItem(item);
@@ -260,14 +275,12 @@
     });
   });
 
-  // Cerrar todos los dropdowns al hacer click fuera del navbar
   document.addEventListener('click', function(e){
     if(!e.target.closest('.nav-item')){
       closeAll(null);
     }
   });
 
-  // Cerrar dropdowns con la tecla Escape en cualquier parte
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape'){
       closeAll(null);
@@ -289,7 +302,6 @@
   var autoplayTimer = null;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Construir indicadores de posición
   slides.forEach(function(_, i){
     var dot = document.createElement('button');
     dot.type = 'button';
@@ -316,9 +328,8 @@
     updateCarousel();
   }
 
-  // Avance automático cada 5 segundos
   function startAutoplay(){
-    if(reducedMotion) return; // respeta la preferencia de movimiento reducido
+    if(reducedMotion || isVideoPlaying) return; 
     stopAutoplay();
     autoplayTimer = setInterval(function(){
       goToSlide(current + 1);
@@ -332,8 +343,10 @@
     }
   }
 
-  // Reinicia el temporizador cada vez que hay navegación manual,
-  // para que el siguiente auto-avance vuelva a esperar 5s completos
+  // Exportar funciones para ser usadas por el reproductor de YouTube
+  stopAutoplayGlobal = stopAutoplay;
+  startAutoplayGlobal = startAutoplay;
+
   function goToSlideManual(index){
     goToSlide(index);
     startAutoplay();
@@ -342,35 +355,40 @@
   prevBtn.addEventListener('click', function(){ goToSlideManual(current - 1); });
   nextBtn.addEventListener('click', function(){ goToSlideManual(current + 1); });
 
-  // Navegación con teclado cuando el carrusel tiene el foco
   carouselEl.addEventListener('keydown', function(e){
     if(e.key === 'ArrowLeft'){ goToSlideManual(current - 1); }
     if(e.key === 'ArrowRight'){ goToSlideManual(current + 1); }
   });
 
-  // Pausar el auto-avance mientras el usuario interactúa con el carrusel
   carouselEl.addEventListener('mouseenter', stopAutoplay);
-  carouselEl.addEventListener('mouseleave', startAutoplay);
+  carouselEl.addEventListener('mouseleave', function(){
+    if(!isVideoPlaying) startAutoplay();
+  });
   carouselEl.addEventListener('focusin', stopAutoplay);
   carouselEl.addEventListener('focusout', function(e){
-    if(!carouselEl.contains(e.relatedTarget)) startAutoplay();
+    if(!carouselEl.contains(e.relatedTarget) && !isVideoPlaying) startAutoplay();
   });
-  // Pausar también cuando la pestaña no está visible
+  
   document.addEventListener('visibilitychange', function(){
-    if(document.hidden){ stopAutoplay(); } else { startAutoplay(); }
+    if(document.hidden){ 
+      stopAutoplay(); 
+    } else { 
+      if(!isVideoPlaying) startAutoplay(); 
+    }
   });
 
-  // Enlaces "Ver video": placeholder hasta que se agregue la URL real
   slides.forEach(function(slide){
     var link = slide.querySelector('[data-role="ver-video"]');
     var placeholder = slide.querySelector('.video-placeholder');
-    link.addEventListener('click', function(e){
-      var url = placeholder.getAttribute('data-video-url');
-      if(!url){
-        e.preventDefault();
-        alert('Este video aún no ha sido configurado. Agrega la URL en el atributo data-video-url del placeholder correspondiente.');
-      }
-    });
+    if (link && placeholder) {
+      link.addEventListener('click', function(e){
+        var url = placeholder.getAttribute('data-video-url');
+        if(!url){
+          e.preventDefault();
+          alert('Este video aún no ha sido configurado. Agrega la URL en el atributo data-video-url del placeholder correspondiente.');
+        }
+      });
+    }
   });
 
   updateCarousel();
