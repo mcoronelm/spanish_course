@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survival Spanish · Practice — Mundo ELE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+<!-- HEADER (Shared from index.html) -->
+<header class="site-header">
+  <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
+ <h1>
+  <a href="index.html" class="logo-link">
+    Mundo <span>ELE</span>
+  </a>
+</h1>
+  <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
+
+  <!-- Pasaporte de sellos específico del módulo
+  <div class="stamps" id="stamps">
+    <div class="stamp" data-i="1">EX·01</div>
+    <div class="stamp" data-i="2">EX·02</div>
+    <div class="stamp" data-i="3">EX·03</div>
+    <div class="stamp" data-i="4">EX·04</div>
+    <div class="stamp" data-i="5">EX·05</div>
+  </div> -->
+</header>
+
+<!-- NAVBAR (Shared from index.html) -->
+<nav class="navbar" aria-label="Navegación de unidades">
+  <div class="navbar-inner" id="navbarInner">
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Elementals <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="elementals-1.html">Survival 1</a></li>
+        <li role="none"><a role="menuitem" href="elementals-2.html">Survival 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics1-1.html">Basics 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics1-2.html">Basics 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 2 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics2-1.html">Basics 2 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics2-2.html">Basics 2 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Unit 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="unit1-1.html">Unit 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="unit1-2.html">Unit 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main-content">
+  <div class="exercise-stack">
+
+    <!-- EXERCISE 1: FLASHCARDS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">01</span>Flashcards</h2>
+        <span class="tag mono">WARM-UP</span>
+      </div>
+      <p class="instructions">Tap the card to flip it. Go through all the phrases at least once.</p>
+      <div class="flashcard-zone">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-inner">
+            <div class="flashcard-face flashcard-front">
+              <div class="lbl">ESPAÑOL</div>
+              <div class="txt" id="flashFront"></div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="lbl">ENGLISH</div>
+              <div class="txt" id="flashBack"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flash-nav">
+          <button onclick="prevCard()">‹</button>
+          <span class="flash-counter mono" id="flashCounter">1 / 19</span>
+          <button onclick="nextCard()">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXERCISE 2: MULTIPLE CHOICE -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">02</span>Quick Check</h2>
+        <span class="tag mono">MULTIPLE CHOICE</span>
+      </div>
+      <p class="instructions">Choose the correct English meaning for each phrase.</p>
+      <div id="quizWrap"></div>
+      <div class="feedback" id="fb2"></div>
+    </section>
+
+    <!-- EXERCISE 3: MATCHING -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">03</span>Match It</h2>
+        <span class="tag mono">PAIRS</span>
+      </div>
+      <p class="instructions">Click a Spanish phrase, then click its English match.</p>
+      <div class="match-wrap">
+        <div class="match-col">
+          <h3>ESPAÑOL</h3>
+          <div id="matchLeft"></div>
+        </div>
+        <div class="match-col">
+          <h3>ENGLISH</h3>
+          <div id="matchRight"></div>
+        </div>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </section>
+
+    <!-- EXERCISE 4: TYPING -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">04</span>Type It</h2>
+        <span class="tag mono">RECALL</span>
+      </div>
+      <p class="instructions">Write the Spanish phrase for each English cue below.</p>
+      <div class="type-grid" id="typeGrid"></div>
+      <button class="btn-action" onclick="checkTyping()" style="margin-top:16px;">Check</button>
+      <div class="feedback" id="fb4"></div>
+    </section>
+
+    <!-- EXERCISE 5: SCENARIOS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">05</span>Real Situations</h2>
+        <span class="tag mono">SCENARIOS</span>
+      </div>
+      <p class="instructions">Pick the phrase that fits the situation best.</p>
+      <div id="scenarioWrap"></div>
+      <div class="feedback" id="fb5"></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- FOOTER (Shared from index.html) -->
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="credit">Moises Coronel <span>·</span> Spanish Course</p>
+</footer>
+
+<script>
+/* =========================================================
+   NAVBAR: Funcionalidad Dropdown
+========================================================= */
+(function(){
+  "use strict";
+  var navItems = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+  var isTouchOrNoHover = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  function closeAll(exceptItem){
+    navItems.forEach(function(item){
+      if(item !== exceptItem){
+        item.classList.remove('open');
+        var btn = item.querySelector('.nav-toggle');
+        if(btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function openItem(item){
+    item.classList.add('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeItem(item){
+    item.classList.remove('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  navItems.forEach(function(item){
+    var toggle = item.querySelector('.nav-toggle');
+
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = !item.classList.contains('open');
+      closeAll(item);
+      if(willOpen){
+        openItem(item);
+      } else {
+        closeItem(item);
+      }
+    });
+
+    if(!isTouchOrNoHover){
+      item.addEventListener('mouseenter', function(){
+        closeAll(item);
+        openItem(item);
+      });
+      item.addEventListener('mouseleave', function(){
+        closeItem(item);
+      });
+    }
+
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        closeItem(item);
+        toggle.focus();
+      }
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.nav-item')){
+      closeAll(null);
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      closeAll(null);
+    }
+  });
+})();
+
+/* =========================================================
+   LÓGICA DE EJERCICIOS Y VOCABULARIO (Survival Spanish)
+========================================================= */
+const VOCAB = [
+  {es:"Hola", en:"Hello"},
+  {es:"¿Cómo estás?", en:"How are you?"},
+  {es:"Hasta luego", en:"See you later"},
+  {es:"Gracias", en:"Thank you"},
+  {es:"Por favor", en:"Please"},
+  {es:"Disculpe", en:"Excuse me"},
+  {es:"Y", en:"And"},
+  {es:"Sin", en:"Without"},
+  {es:"No", en:"No"},
+  {es:"Sí", en:"Yes"},
+  {es:"Bien", en:"Good / well"},
+  {es:"De nada", en:"You're welcome"},
+  {es:"¿Dónde está el baño?", en:"Where is the bathroom?"},
+  {es:"No sé", en:"I don't know"},
+  {es:"¿Cómo se dice?", en:"How do you say...?"},
+  {es:"No entiendo", en:"I don't understand"},
+  {es:"No hablo español", en:"I don't speak Spanish"},
+  {es:"Agua", en:"Water"},
+  {es:"Comida", en:"Food"},
+];
+
+function normalize(str){
+  return str.trim().toLowerCase()
+    .replace(/á/g,"a").replace(/é/g,"e").replace(/í/g,"i").replace(/ó/g,"o").replace(/ú/g,"u")
+    .replace(/¿|\?|¡|!/g,"").replace(/\s+/g," ");
+}
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+/* STAMPS */
+let stampsOn = 0;
+function earnStamp(n){
+  if(n<=stampsOn) return;
+  stampsOn = n;
+  document.querySelectorAll('.stamp').forEach(s=>{
+    if(parseInt(s.dataset.i)<=stampsOn) s.classList.add('on');
+  });
+}
+
+/* EXERCISE 1: FLASHCARDS */
+let flashOrder = shuffle(VOCAB);
+let flashIdx = 0;
+const flashcardEl = document.getElementById('flashcard');
+function renderFlash(){
+  document.getElementById('flashFront').textContent = flashOrder[flashIdx].es;
+  document.getElementById('flashBack').textContent = flashOrder[flashIdx].en;
+  document.getElementById('flashCounter').textContent = `${flashIdx+1} / ${flashOrder.length}`;
+  flashcardEl.classList.remove('flipped');
+}
+flashcardEl.onclick = ()=> flashcardEl.classList.toggle('flipped');
+function nextCard(){
+  flashIdx = (flashIdx+1) % flashOrder.length;
+  renderFlash();
+  if(flashIdx === flashOrder.length-1) earnStamp(1);
+}
+function prevCard(){
+  flashIdx = (flashIdx-1+flashOrder.length) % flashOrder.length;
+  renderFlash();
+}
+renderFlash();
+
+/* EXERCISE 2: MULTIPLE CHOICE */
+const quizItems = shuffle(VOCAB).slice(0,6);
+const quizWrap = document.getElementById('quizWrap');
+let quizCorrect = 0;
+let quizAnswered = 0;
+
+quizItems.forEach((item,qi)=>{
+  const wrongPool = shuffle(VOCAB.filter(v=>v.en!==item.en)).slice(0,3).map(v=>v.en);
+  const options = shuffle([item.en, ...wrongPool]);
+
+  const qDiv = document.createElement('div');
+  qDiv.className='quiz-q';
+  qDiv.innerHTML = `<div class="prompt">“${item.es}” means...</div>`;
+  const optDiv = document.createElement('div');
+  optDiv.className='quiz-options';
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.textContent = opt;
+    b.onclick = ()=>{
+      const buttons = optDiv.querySelectorAll('button');
+      buttons.forEach(bt=>bt.disabled=true);
+      if(opt === item.en){
+        b.classList.add('correct');
+        quizCorrect++;
+      } else {
+        b.classList.add('wrong');
+        buttons.forEach(bt=>{ if(bt.textContent===item.en) bt.classList.add('correct'); });
+      }
+      quizAnswered++;
+      updateQuizFeedback();
+    };
+    optDiv.appendChild(b);
+  });
+  qDiv.appendChild(optDiv);
+  quizWrap.appendChild(qDiv);
+});
+
+function updateQuizFeedback(){
+  const fb = document.getElementById('fb2');
+  if(quizAnswered === quizItems.length){
+    fb.textContent = `Score: ${quizCorrect} / ${quizItems.length}`;
+    fb.className = quizCorrect===quizItems.length ? 'feedback good' : 'feedback bad';
+    if(quizCorrect===quizItems.length) earnStamp(2);
+  } else {
+    fb.textContent = `Answered ${quizAnswered} / ${quizItems.length}`;
+    fb.className='feedback';
+  }
+}
+
+/* EXERCISE 3: MATCHING */
+const matchItems = shuffle(VOCAB).slice(0,6);
+const leftOrder = shuffle(matchItems);
+const rightOrder = shuffle(matchItems);
+const matchLeft = document.getElementById('matchLeft');
+const matchRight = document.getElementById('matchRight');
+let selectedLeft = null, selectedRight = null;
+let matchedCount = 0;
+
+leftOrder.forEach(item=>{
+  const d = document.createElement('div');
+  d.className='match-item';
+  d.textContent = item.es;
+  d.dataset.en = item.en;
+  d.onclick = ()=>selectMatch(d,'left');
+  matchLeft.appendChild(d);
+});
+rightOrder.forEach(item=>{
+  const d = document.createElement('div');
+  d.className='match-item';
+  d.textContent = item.en;
+  d.dataset.en = item.en;
+  d.onclick = ()=>selectMatch(d,'right');
+  matchRight.appendChild(d);
+});
+
+function selectMatch(el, side){
+  if(el.classList.contains('matched')) return;
+  if(side==='left'){
+    if(selectedLeft) selectedLeft.classList.remove('selected');
+    selectedLeft = el; el.classList.add('selected');
+  } else {
+    if(selectedRight) selectedRight.classList.remove('selected');
+    selectedRight = el; el.classList.add('selected');
+  }
+  if(selectedLeft && selectedRight){
+    if(selectedLeft.dataset.en === selectedRight.dataset.en){
+      selectedLeft.classList.remove('selected'); selectedLeft.classList.add('matched');
+      selectedRight.classList.remove('selected'); selectedRight.classList.add('matched');
+      matchedCount++;
+      const fb = document.getElementById('fb3');
+      if(matchedCount === matchItems.length){
+        fb.textContent = "All matched! 🎯";
+        fb.className='feedback good';
+        earnStamp(3);
+      } else {
+        fb.textContent = `${matchedCount} / ${matchItems.length} matched`;
+        fb.className='feedback';
+      }
+    } else {
+      selectedLeft.classList.add('shake');
+      selectedRight.classList.add('shake');
+      setTimeout(()=>{
+        selectedLeft.classList.remove('selected','shake');
+        selectedRight.classList.remove('selected','shake');
+      }, 500);
+    }
+    selectedLeft = null; selectedRight = null;
+  }
+}
+
+/* EXERCISE 4: TYPING */
+const typeItems = shuffle(VOCAB).slice(0,7);
+const typeGrid = document.getElementById('typeGrid');
+typeItems.forEach(item=>{
+  const d = document.createElement('div');
+  d.className='type-item';
+  d.innerHTML = `<div class="en">${item.en}</div><input type="text" data-answer="${item.es}" placeholder="escribe en español...">`;
+  typeGrid.appendChild(d);
+});
+function checkTyping(){
+  const inputs = typeGrid.querySelectorAll('input');
+  let correct = 0;
+  inputs.forEach(inp=>{
+    if(normalize(inp.value)===normalize(inp.dataset.answer)){
+      inp.classList.add('correct'); inp.classList.remove('wrong');
+      correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+    }
+  });
+  const fb = document.getElementById('fb4');
+  if(correct===inputs.length){
+    fb.textContent = `Perfect, ${correct}/${inputs.length} correct.`;
+    fb.className='feedback good';
+    earnStamp(4);
+  } else {
+    fb.textContent = `${correct}/${inputs.length} correct. Check the red ones.`;
+    fb.className='feedback bad';
+  }
+}
+
+/* EXERCISE 5: SCENARIOS */
+const scenarios = [
+  {situation:"You just walked into a shop and want to greet the shopkeeper.", correct:"Hola", options:["Hola","Hasta luego","No sé"]},
+  {situation:"You need to find a restroom in a restaurant.", correct:"¿Dónde está el baño?", options:["¿Cómo se dice?","¿Dónde está el baño?","No entiendo"]},
+  {situation:"Someone thanks you for helping them.", correct:"De nada", options:["De nada","Por favor","Sin"]},
+  {situation:"You bump into someone by accident.", correct:"Disculpe", options:["Bien","Disculpe","Sí"]},
+  {situation:"Someone speaks really fast and you didn't catch any of it.", correct:"No entiendo", options:["No sé","No entiendo","Gracias"]},
+  {situation:"You're leaving a friend's house and will see them tomorrow.", correct:"Hasta luego", options:["Hasta luego","Agua","Comida"]},
+];
+const scenarioWrap = document.getElementById('scenarioWrap');
+let scenarioAnswered = 0, scenarioCorrect = 0;
+
+shuffle(scenarios).forEach(sc=>{
+  const d = document.createElement('div');
+  d.className='scenario';
+  d.innerHTML = `<div class="situation">${sc.situation}</div>
+    <div class="prompt">What do you say?</div>`;
+  const optDiv = document.createElement('div');
+  optDiv.className='quiz-options';
+  shuffle(sc.options).forEach(opt=>{
+    const b = document.createElement('button');
+    b.textContent = opt;
+    b.onclick = ()=>{
+      const buttons = optDiv.querySelectorAll('button');
+      buttons.forEach(bt=>bt.disabled=true);
+      if(opt===sc.correct){
+        b.classList.add('correct');
+        scenarioCorrect++;
+      } else {
+        b.classList.add('wrong');
+        buttons.forEach(bt=>{ if(bt.textContent===sc.correct) bt.classList.add('correct'); });
+      }
+      scenarioAnswered++;
+      const fb = document.getElementById('fb5');
+      if(scenarioAnswered===scenarios.length){
+        fb.textContent = `Score: ${scenarioCorrect} / ${scenarios.length}`;
+        fb.className = scenarioCorrect===scenarios.length ? 'feedback good' : 'feedback bad';
+        if(scenarioCorrect===scenarios.length) earnStamp(5);
+      } else {
+        fb.textContent = `Answered ${scenarioAnswered} / ${scenarios.length}`;
+        fb.className='feedback';
+      }
+    };
+    optDiv.appendChild(b);
+  });
+  d.appendChild(optDiv);
+  scenarioWrap.appendChild(d);
+});
+</script>
+
+</body>
+</html>
