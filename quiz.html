@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Spanish - ELE Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
+            --accent-gradient: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-card: rgba(255, 255, 255, 0.92);
+            --text-dark: #0f172a;
+            --text-light: #f8fafc;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.25s ease-in-out;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin: 0;
+            background: linear-gradient(to right, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            border-color: transparent;
+        }
+
+        .section-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Layout */
+        .card {
+            background: var(--glass-card);
+            color: var(--text-dark);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--secondary-gradient);
+        }
+
+        .eval-card::before {
+            background: var(--accent-gradient);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #1e293b;
+        }
+
+        /* Interactive Inputs */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn-option {
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            color: var(--text-dark);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: 500;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-option:hover {
+            border-color: #818cf8;
+            background: #f8fafc;
+            transform: scale(1.01);
+        }
+
+        .btn-option.selected {
+            border-color: #6366f1;
+            background: #eeef2f1;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #cbd5e1;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            margin-bottom: 12px;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #6366f1;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-item {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: #6366f1;
+        }
+
+        /* Action Buttons */
+        .btn-submit {
+            padding: 10px 22px;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-main-eval {
+            padding: 18px 45px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(244, 63, 94, 0.4);
+            display: block;
+            margin: 30px auto;
+        }
+
+        .btn-main-eval:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(244, 63, 94, 0.5);
+        }
+
+        /* Feedback UI */
+        .feedback {
+            margin-top: 15px;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Evaluation Score Panel */
+        #results-panel {
+            background: var(--glass-card);
+            color: var(--text-dark);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 2.5rem;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .score-circle span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--secondary-gradient);
+            transition: width 1s ease-in-out;
+        }
+
+        /* Radio Styling in Evaluation */
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option:hover {
+            background: #f1f5f9;
+        }
+
+        .radio-option input {
+            accent-color: #a855f7;
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Survival Spanish</h1>
+        <p class="subtitle">Learn, practice, and evaluate your real-world Spanish skills (Levels A1-A2)</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('practica')">
+            <span>🎯</span> Interactive Practice (16)
+        </button>
+        <button class="tab-btn" onclick="switchTab('evaluacion')">
+            <span>📝</span> Graded Test (16)
+        </button>
+    </div>
+
+    <!-- ================= PRACTICE SECTION (16 Exercises) ================= -->
+    <div id="practica" class="section-content active">
+
+        <!-- P1 -->
+        <div class="card" id="p1">
+            <div class="card-header">
+                <span class="badge">Survival 1</span>
+            </div>
+            <div class="question-text">1. You need to use the restroom at a restaurant. Which phrase do you ask?</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p1', true)">¿Dónde está el baño? <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p1', false)">¿Cuánto es? <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p1', false)">¿Qué hora es? <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p1', false)">No entiendo <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p1-feedback"></div>
+        </div>
+
+        <!-- P2 -->
+        <div class="card" id="p2">
+            <div class="card-header">
+                <span class="badge">Survival 2</span>
+            </div>
+            <div class="question-text">2. Translate into Spanish the payment method using bills/coins: "Cash"</div>
+            <input type="text" id="p2-input" placeholder="Type your answer here...">
+            <button class="btn-submit" onclick="checkText('p2', ['efectivo'])">Check Answer</button>
+            <div class="feedback" id="p2-feedback"></div>
+        </div>
+
+        <!-- P3 -->
+        <div class="card" id="p3">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">3. Select only the options that are DRINKS (Bebidas):</div>
+            <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" name="p3-opt" value="café"> Café</label>
+                <label class="checkbox-item"><input type="checkbox" name="p3-opt" value="arroz"> Arroz</label>
+                <label class="checkbox-item"><input type="checkbox" name="p3-opt" value="jugo"> Jugo</label>
+                <label class="checkbox-item"><input type="checkbox" name="p3-opt" value="té"> Té</label>
+            </div>
+            <button class="btn-submit" onclick="checkCheckboxes('p3', ['café', 'jugo', 'té'])">Check Selection</button>
+            <div class="feedback" id="p3-feedback"></div>
+        </div>
+
+        <!-- P4 -->
+        <div class="card" id="p4">
+            <div class="card-header">
+                <span class="badge">Survival 1</span>
+            </div>
+            <div class="question-text">4. Complete the polite expression: "Muchas ________ por su ayuda."</div>
+            <input type="text" id="p4-input" placeholder="Type the missing word...">
+            <button class="btn-submit" onclick="checkText('p4', ['gracias'])">Check Answer</button>
+            <div class="feedback" id="p4-feedback"></div>
+        </div>
+
+        <!-- P5 -->
+        <div class="card" id="p5">
+            <div class="card-header">
+                <span class="badge">Survival 2</span>
+            </div>
+            <div class="question-text">5. If someone tells you to walk to the left (izquierda), the opposite direction is:</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p5', true)">Derecha <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p5', false)">Caliente <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p5', false)">Documento <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p5', false)">Frío <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p5-feedback"></div>
+        </div>
+
+        <!-- P6 -->
+        <div class="card" id="p6">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">6. Which of these foods belongs to the protein/meat category on the menu?</div>
+            <select id="p6-select">
+                <option value="">-- Select an option --</option>
+                <option value="ensalada">Ensalada</option>
+                <option value="pollo">Pollo</option>
+                <option value="sal">Sal</option>
+            </select>
+            <button class="btn-submit" onclick="checkSelect('p6', 'pollo')">Check Option</button>
+            <div class="feedback" id="p6-feedback"></div>
+        </div>
+
+        <!-- P7 -->
+        <div class="card" id="p7">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">7. If an ingredient causes you health issues, you say: "Soy ________".</div>
+            <input type="text" id="p7-input" placeholder="Type the masculine or feminine adjective...">
+            <button class="btn-submit" onclick="checkText('p7', ['alergico', 'alergica'])">Check Answer</button>
+            <div class="feedback" id="p7-feedback"></div>
+        </div>
+
+        <!-- P8 -->
+        <div class="card" id="p8">
+            <div class="card-header">
+                <span class="badge">Survival 1</span>
+            </div>
+            <div class="question-text">8. Someone greets you by saying: "¿Cómo estás?", you politely reply:</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p8', true)">Bien, ¿y tú? <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p8', false)">No quiero <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p8', false)">Crédito <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p8', false)">Hasta luego <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p8-feedback"></div>
+        </div>
+
+        <!-- P9 -->
+        <div class="card" id="p9">
+            <div class="card-header">
+                <span class="badge">Survival 1</span>
+            </div>
+            <div class="question-text">9. What expression do you use to ask for something politely? (English: "Please")</div>
+            <input type="text" id="p9-input" placeholder="Type the expression in Spanish...">
+            <button class="btn-submit" onclick="checkText('p9', ['por favor'])">Check Answer</button>
+            <div class="feedback" id="p9-feedback"></div>
+        </div>
+
+        <!-- P10 -->
+        <div class="card" id="p10">
+            <div class="card-header">
+                <span class="badge">Survival 2</span>
+            </div>
+            <div class="question-text">10. You are in danger or facing an emergency in public. What do you shout to ask for assistance?</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p10', true)">¡Ayuda! <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p10', false)">¡Gracias! <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p10', false)">¡Hola! <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p10', false)">¡Frío! <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p10-feedback"></div>
+        </div>
+
+        <!-- P11 -->
+        <div class="card" id="p11">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">11. Which of the following is seafood? (English: "Fish")</div>
+            <select id="p11-select">
+                <option value="">-- Select --</option>
+                <option value="res">Res</option>
+                <option value="pescado">Pescado</option>
+                <option value="pollo">Pollo</option>
+            </select>
+            <button class="btn-submit" onclick="checkSelect('p11', 'pescado')">Check Answer</button>
+            <div class="feedback" id="p11-feedback"></div>
+        </div>
+
+        <!-- P12 -->
+        <div class="card" id="p12">
+            <div class="card-header">
+                <span class="badge">Survival 2</span>
+            </div>
+            <div class="question-text">12. Select the words related to TEMPERATURE:</div>
+            <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" name="p12-opt" value="caliente"> Caliente</label>
+                <label class="checkbox-item"><input type="checkbox" name="p12-opt" value="efectivo"> Efectivo</label>
+                <label class="checkbox-item"><input type="checkbox" name="p12-opt" value="frío"> Frío</label>
+                <label class="checkbox-item"><input type="checkbox" name="p12-opt" value="derecha"> Derecha</label>
+            </div>
+            <button class="btn-submit" onclick="checkCheckboxes('p12', ['caliente', 'frío'])">Check Selection</button>
+            <div class="feedback" id="p12-feedback"></div>
+        </div>
+
+        <!-- P13 -->
+        <div class="card" id="p13">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">13. Basic white seasoning used to flavor meals or salad:</div>
+            <input type="text" id="p13-input" placeholder="Seasoning name in Spanish...">
+            <button class="btn-submit" onclick="checkText('p13', ['sal'])">Check Answer</button>
+            <div class="feedback" id="p13-feedback"></div>
+        </div>
+
+        <!-- P14 -->
+        <div class="card" id="p14">
+            <div class="card-header">
+                <span class="badge">Survival 2</span>
+            </div>
+            <div class="question-text">14. Which expression is used to encourage a group to move or start an action? (English: "Let's go!")</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p14', true)">¡Vamos! <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p14', false)">Disculpe <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p14', false)">De nada <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p14', false)">Por favor <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p14-feedback"></div>
+        </div>
+
+        <!-- P15 -->
+        <div class="card" id="p15">
+            <div class="card-header">
+                <span class="badge">Survival 3</span>
+            </div>
+            <div class="question-text">15. A cold dish made mainly with fresh vegetables:</div>
+            <input type="text" id="p15-input" placeholder="Dish name in Spanish...">
+            <button class="btn-submit" onclick="checkText('p15', ['ensalada'])">Check Answer</button>
+            <div class="feedback" id="p15-feedback"></div>
+        </div>
+
+        <!-- P16 -->
+        <div class="card" id="p16">
+            <div class="card-header">
+                <span class="badge">Survival 1</span>
+            </div>
+            <div class="question-text">16. When someone tells you "Gracias", your polite response is:</div>
+            <div class="options-grid">
+                <button class="btn-option" onclick="checkMCQ('p16', true)">De nada <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p16', false)">Hola <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p16', false)">No entiendo <span>➔</span></button>
+                <button class="btn-option" onclick="checkMCQ('p16', false)">Efectivo <span>➔</span></button>
+            </div>
+            <div class="feedback" id="p16-feedback"></div>
+        </div>
+
+    </div>
+
+    <!-- ================= EVALUATION SECTION (16 Exercises) ================= -->
+    <div id="evaluacion" class="section-content">
+        <div class="card eval-card" style="background: rgba(255, 255, 255, 0.95);">
+            <h2>Survival Spanish Test</h2>
+            <p>Answer the 16 questions to evaluate your basic vocabulary and communication skills. Click <strong>"Submit and Evaluate Test"</strong> at the end.</p>
+        </div>
+
+        <form id="eval-form">
+            <!-- E1 -->
+            <div class="card eval-card">
+                <div class="question-text">1. (Survival 1) Phrase to apologize or politely catch a waiter's attention:</div>
+                <label class="radio-option"><input type="radio" name="e1" value="a"> Disculpe</label>
+                <label class="radio-option"><input type="radio" name="e1" value="b"> De nada</label>
+                <label class="radio-option"><input type="radio" name="e1" value="c"> No sé</label>
+            </div>
+
+            <!-- E2 -->
+            <div class="card eval-card">
+                <div class="question-text">2. (Survival 2) To ask for the price of an item you ask:</div>
+                <label class="radio-option"><input type="radio" name="e2" value="a"> ¿Qué hora es?</label>
+                <label class="radio-option"><input type="radio" name="e2" value="b"> ¿Cuánto es?</label>
+                <label class="radio-option"><input type="radio" name="e2" value="c"> ¡Vamos!</label>
+            </div>
+
+            <!-- E3 -->
+            <div class="card eval-card">
+                <div class="question-text">3. (Survival 3) Write in Spanish the name of the basic white grain cereal (English: "Rice"):</div>
+                <input type="text" name="e3" placeholder="Your answer in Spanish...">
+            </div>
+
+            <!-- E4 -->
+            <div class="card eval-card">
+                <div class="question-text">4. (Survival 1) If you fail to understand an instruction you say:</div>
+                <label class="radio-option"><input type="radio" name="e4" value="a"> No entiendo</label>
+                <label class="radio-option"><input type="radio" name="e4" value="b"> Por favor</label>
+                <label class="radio-option"><input type="radio" name="e4" value="c"> ¡Ayuda!</label>
+            </div>
+
+            <!-- E5 -->
+            <div class="card eval-card">
+                <div class="question-text">5. (Survival 2) Plastic banking payment method (type "tarjeta" or "crédito"):</div>
+                <input type="text" name="e5" placeholder="Your answer in Spanish...">
+            </div>
+
+            <!-- E6 -->
+            <div class="card eval-card">
+                <div class="question-text">6. (Survival 3) Popular hot stimulating drink widely consumed in the morning:</div>
+                <label class="radio-option"><input type="radio" name="e6" value="a"> Sopa</label>
+                <label class="radio-option"><input type="radio" name="e6" value="b"> Café</label>
+                <label class="radio-option"><input type="radio" name="e6" value="c"> Pescado</label>
+            </div>
+
+            <!-- E7 -->
+            <div class="card eval-card">
+                <div class="question-text">7. (Survival 2) What is the opposite word of "Caliente"?</div>
+                <label class="radio-option"><input type="radio" name="e7" value="a"> Frío</label>
+                <label class="radio-option"><input type="radio" name="e7" value="b"> Nada</label>
+                <label class="radio-option"><input type="radio" name="e7" value="c"> No puedo</label>
+            </div>
+
+            <!-- E8 -->
+            <div class="card eval-card">
+                <div class="question-text">8. (Survival 1) Common/formal farewell expression (English: "Goodbye"):</div>
+                <input type="text" name="e8" placeholder="Your answer in Spanish...">
+            </div>
+
+            <!-- E9 -->
+            <div class="card eval-card">
+                <div class="question-text">9. (Survival 1) Standard greeting when arriving at a place during the day:</div>
+                <label class="radio-option"><input type="radio" name="e9" value="a"> ¡Hola!</label>
+                <label class="radio-option"><input type="radio" name="e9" value="b"> Gracias</label>
+                <label class="radio-option"><input type="radio" name="e9" value="c"> Por favor</label>
+            </div>
+
+            <!-- E10 -->
+            <div class="card eval-card">
+                <div class="question-text">10. (Survival 2) The direction opposite to left (izquierda):</div>
+                <input type="text" name="e10" placeholder="Type the direction in Spanish...">
+            </div>
+
+            <!-- E11 -->
+            <div class="card eval-card">
+                <div class="question-text">11. (Survival 3) Edible beef meat (English: "Beef"):</div>
+                <label class="radio-option"><input type="radio" name="e11" value="a"> Res</label>
+                <label class="radio-option"><input type="radio" name="e11" value="b"> Arroz</label>
+                <label class="radio-option"><input type="radio" name="e11" value="c"> Sal</label>
+            </div>
+
+            <!-- E12 -->
+            <div class="card eval-card">
+                <div class="question-text">12. (Survival 1) If someone sneezes or you wish good health at the table you say:</div>
+                <label class="radio-option"><input type="radio" name="e12" value="a"> Salud</label>
+                <label class="radio-option"><input type="radio" name="e12" value="b"> Ayuda</label>
+                <label class="radio-option"><input type="radio" name="e12" value="c"> Baño</label>
+            </div>
+
+            <!-- E13 -->
+            <div class="card eval-card">
+                <div class="question-text">13. (Survival 2) Physical coins or paper bills used in commercial transactions (English: "Cash"):</div>
+                <input type="text" name="e13" placeholder="Type the concept in Spanish...">
+            </div>
+
+            <!-- E14 -->
+            <div class="card eval-card">
+                <div class="question-text">14. (Survival 3) Type of white meat coming from a farm bird (English: "Chicken"):</div>
+                <label class="radio-option"><input type="radio" name="e14" value="a"> Pollo</label>
+                <label class="radio-option"><input type="radio" name="e14" value="b"> Pescado</label>
+                <label class="radio-option"><input type="radio" name="e14" value="c"> Café</label>
+            </div>
+
+            <!-- E15 -->
+            <div class="card eval-card">
+                <div class="question-text">15. (Survival 1) Basic question used to ask for the current time:</div>
+                <label class="radio-option"><input type="radio" name="e15" value="a"> ¿Qué hora es?</label>
+                <label class="radio-option"><input type="radio" name="e15" value="b"> ¿Dónde está?</label>
+                <label class="radio-option"><input type="radio" name="e15" value="c"> ¿Cómo te llamas?</label>
+            </div>
+
+            <!-- E16 -->
+            <div class="card eval-card">
+                <div class="question-text">16. (Survival 3) If you suffer a adverse reaction to lactose or peanuts you say: "Tengo ________" or "Soy ________":</div>
+                <input type="text" name="e16" placeholder="Type the adjective or noun in Spanish...">
+            </div>
+
+            <button type="button" class="btn-main-eval" onclick="submitEvaluation()">🚀 Submit and Evaluate Test</button>
+        </form>
+
+        <!-- Results Dashboard -->
+        <div id="results-panel">
+            <h2>Final Results</h2>
+            <div class="score-circle">
+                <div id="score-text">0/16</div>
+                <span id="score-percent">0%</span>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="score-bar"></div>
+            </div>
+
+            <h3 id="feedback-title"></h3>
+            <p id="feedback-message" style="font-size: 1.1rem; color: #475569;"></p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Tab Navigation Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
+
+        if(tabId === 'practica') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        }
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // Helper functions for Practice
+    function checkMCQ(cardId, isCorrect) {
+        const feedbackEl = document.getElementById(cardId + '-feedback');
+        if (isCorrect) {
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerText = 'Correct! Excellent choice.';
+        } else {
+            feedbackEl.className = 'feedback incorrect';
+            feedbackEl.innerText = 'Try again. That is not the correct option.';
+        }
+    }
+
+    function checkText(cardId, correctAnswers) {
+        const inputVal = document.getElementById(cardId + '-input').value.trim().toLowerCase();
+        const feedbackEl = document.getElementById(cardId + '-feedback');
+
+        const normalizedInput = inputVal.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        const isCorrect = correctAnswers.some(ans => {
+            const normalizedAns = ans.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return normalizedInput === normalizedAns;
+        });
+
+        if (isCorrect) {
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerText = 'Well done! Your answer is correct.';
+        } else {
+            feedbackEl.className = 'feedback incorrect';
+            feedbackEl.innerText = `Incorrect. Expected answer(s): "${correctAnswers.join(' / ')}".`;
+        }
+    }
+
+    function checkCheckboxes(cardId, correctArray) {
+        const checkboxes = document.querySelectorAll(`input[name="${cardId}-opt"]:checked`);
+        const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+        const feedbackEl = document.getElementById(cardId + '-feedback');
+
+        const isMatch = selectedValues.length === correctArray.length && 
+                        selectedValues.every(val => correctArray.includes(val));
+
+        if (isMatch) {
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerText = 'Great! You selected all the correct options.';
+        } else {
+            feedbackEl.className = 'feedback incorrect';
+            feedbackEl.innerText = 'Review your selection. Make sure to check only the right answers.';
+        }
+    }
+
+    function checkSelect(cardId, correctAnswer) {
+        const selectVal = document.getElementById(cardId + '-select').value;
+        const feedbackEl = document.getElementById(cardId + '-feedback');
+
+        if (selectVal === correctAnswer) {
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerText = 'Exact! Option properly selected.';
+        } else {
+            feedbackEl.className = 'feedback incorrect';
+            feedbackEl.innerText = 'Incorrect option. Try selecting another alternative.';
+        }
+    }
+
+    // Evaluation Submit Logic (16 Questions)
+    function submitEvaluation() {
+        const form = document.getElementById('eval-form');
+        let score = 0;
+        const total = 16;
+
+        // E1: Radios -> 'a'
+        if (form.e1.value === 'a') score++;
+
+        // E2: Radios -> 'b'
+        if (form.e2.value === 'b') score++;
+
+        // E3: Text -> arroz
+        const e3Val = form.e3.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e3Val === 'arroz') score++;
+
+        // E4: Radios -> 'a'
+        if (form.e4.value === 'a') score++;
+
+        // E5: Text -> credito / tarjeta
+        const e5Val = form.e5.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e5Val.includes('credito') || e5Val.includes('tarjeta')) score++;
+
+        // E6: Radios -> 'b'
+        if (form.e6.value === 'b') score++;
+
+        // E7: Radios -> 'a'
+        if (form.e7.value === 'a') score++;
+
+        // E8: Text -> hasta luego / adios
+        const e8Val = form.e8.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e8Val.includes('hasta luego') || e8Val.includes('adios')) score++;
+
+        // E9: Radios -> 'a'
+        if (form.e9.value === 'a') score++;
+
+        // E10: Text -> derecha
+        const e10Val = form.e10.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e10Val === 'derecha') score++;
+
+        // E11: Radios -> 'a'
+        if (form.e11.value === 'a') score++;
+
+        // E12: Radios -> 'a'
+        if (form.e12.value === 'a') score++;
+
+        // E13: Text -> efectivo
+        const e13Val = form.e13.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e13Val === 'efectivo') score++;
+
+        // E14: Radios -> 'a'
+        if (form.e14.value === 'a') score++;
+
+        // E15: Radios -> 'a'
+        if (form.e15.value === 'a') score++;
+
+        // E16: Text -> alergia / alergico / alergica
+        const e16Val = form.e16.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (e16Val.includes('alergia') || e16Val.includes('alergico') || e16Val.includes('alergica')) score++;
+
+        // Displaying Results
+        const resultsPanel = document.getElementById('results-panel');
+        const scoreText = document.getElementById('score-text');
+        const scorePercent = document.getElementById('score-percent');
+        const scoreBar = document.getElementById('score-bar');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackMsg = document.getElementById('feedback-message');
+
+        resultsPanel.style.display = 'block';
+        scoreText.innerText = `${score}/${total}`;
+
+        const percentage = Math.round((score / total) * 100);
+        scorePercent.innerText = `${percentage}%`;
+        scoreBar.style.width = `${percentage}%`;
+
+        if (percentage >= 85) {
+            feedbackTitle.innerText = "Excellent Level! 🏆";
+            feedbackMsg.innerText = "You master survival Spanish fluently. You are ready to handle everyday real-world situations with ease.";
+        } else if (percentage >= 60) {
+            feedbackTitle.innerText = "Good Job! 👍";
+            feedbackMsg.innerText = "You have solid survival basics, though reviewing some specific shopping and food terms could help you sharpen your skills.";
+        } else {
+            feedbackTitle.innerText = "Keep Practicing! 📚";
+            feedbackMsg.innerText = "We recommend carefully reviewing the modules in the Practice tab to reinforce essential vocabulary.";
+        }
+
+        resultsPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
