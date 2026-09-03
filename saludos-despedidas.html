@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saludos y despedidas · Practice — Mundo ELE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* =========================================================
+       ESTILOS EXTRA PARA LOS NUEVOS WIDGETS INTERACTIVOS
+       (Se apoyan en las clases compartidas de style.css:
+        .card, .card-head, .idx, .tag.mono, .instructions,
+        .feedback, .btn-action, .quiz-options — y añaden solo
+        lo necesario para los componentes nuevos)
+    ========================================================= */
+    :root{
+      --sd-ink:#2b2540;
+      --sd-accent:#4b3f7a;
+      --sd-accent-light:#efeaff;
+      --sd-good:#1f8a5c;
+      --sd-bad:#c14545;
+      --sd-line:#e4e0f2;
+      --sd-bubble-them:#f2f0fa;
+      --sd-bubble-me:#4b3f7a;
+    }
+
+    /* --- EJERCICIO 1: ORDENA EL SALUDO --- */
+    .sort-stage{ display:flex; flex-direction:column; align-items:center; gap:20px; }
+    .sort-progress{ width:100%; max-width:420px; height:6px; background:var(--sd-line); border-radius:99px; overflow:hidden; }
+    .sort-progress-bar{ height:100%; background:var(--sd-accent); width:0%; transition:width .35s ease; }
+    .sort-card{
+      width:100%; max-width:420px; min-height:110px;
+      background:#fff; border:1px solid var(--sd-line); border-radius:16px;
+      display:flex; align-items:center; justify-content:center; text-align:center;
+      padding:24px; font-family:'Oswald',sans-serif; font-size:1.4rem; color:var(--sd-ink);
+      box-shadow:0 6px 20px rgba(43,37,64,.08);
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .sort-card.away-left{ transform:translateX(-140%) rotate(-8deg); opacity:0; }
+    .sort-card.away-right{ transform:translateX(140%) rotate(8deg); opacity:0; }
+    .sort-card.away-up{ transform:translateY(-140%); opacity:0; }
+    .sort-card.shake{ animation:sortShake .4s; }
+    @keyframes sortShake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+    .sort-buckets{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:420px; }
+    .sort-bucket{
+      border:2px solid var(--sd-accent); background:#fff; color:var(--sd-accent);
+      border-radius:12px; padding:12px 8px; font-family:'IBM Plex Mono',monospace;
+      font-size:.78rem; font-weight:600; letter-spacing:.02em; cursor:pointer; text-align:center;
+      transition:background .15s ease, color .15s ease, transform .1s ease;
+    }
+    .sort-bucket:hover{ background:var(--sd-accent-light); }
+    .sort-bucket:active{ transform:scale(.96); }
+    .sort-tally{ font-family:'IBM Plex Mono',monospace; font-size:.85rem; color:var(--sd-ink); opacity:.7; }
+    .sort-done{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); }
+
+    /* --- EJERCICIO 2: CONTRARRELOJ --- */
+    .speed-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+    .speed-stats{ display:flex; gap:18px; font-family:'IBM Plex Mono',monospace; font-size:.85rem; color:var(--sd-ink); }
+    .speed-stats b{ color:var(--sd-accent); }
+    .speed-bar-track{ width:100%; height:8px; background:var(--sd-line); border-radius:99px; overflow:hidden; margin-bottom:18px; }
+    .speed-bar-fill{ height:100%; background:linear-gradient(90deg,var(--sd-accent),#8b7ff0); width:100%; transition:width .1s linear; }
+    .speed-bar-fill.warn{ background:linear-gradient(90deg,#c14545,#e07a5f); }
+    .speed-question{ font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--sd-ink); text-align:center; margin-bottom:16px; }
+    .speed-options{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:520px){ .speed-options{ grid-template-columns:1fr; } }
+    .speed-opt{
+      border:1.5px solid var(--sd-line); background:#fff; border-radius:12px; padding:14px;
+      font-family:'Inter',sans-serif; font-size:.95rem; color:var(--sd-ink); cursor:pointer; text-align:left;
+      transition:border-color .15s ease, background .15s ease;
+    }
+    .speed-opt:hover{ border-color:var(--sd-accent); }
+    .speed-opt.correct{ background:#e7f7ef; border-color:var(--sd-good); color:var(--sd-good); font-weight:600; }
+    .speed-opt.wrong{ background:#fbeaea; border-color:var(--sd-bad); color:var(--sd-bad); }
+    .speed-opt:disabled{ cursor:default; }
+    .speed-endcard{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); padding:20px 0; }
+
+    /* --- EJERCICIO 3: CHAT --- */
+    .chat-frame{
+      max-width:480px; margin:0 auto; border:1px solid var(--sd-line); border-radius:18px;
+      background:#fbfaff; overflow:hidden;
+    }
+    .chat-log{ padding:18px; display:flex; flex-direction:column; gap:10px; min-height:120px; }
+    .chat-context{
+      align-self:center; background:#fff; border:1px dashed var(--sd-line); color:var(--sd-ink); opacity:.75;
+      font-family:'Inter',sans-serif; font-size:.8rem; text-align:center; border-radius:10px; padding:8px 14px; max-width:90%;
+    }
+    .chat-bubble{
+      max-width:78%; padding:10px 14px; border-radius:16px; font-family:'Inter',sans-serif; font-size:.92rem; line-height:1.4;
+      opacity:0; transform:translateY(6px); animation:chatIn .3s ease forwards;
+    }
+    @keyframes chatIn{ to{ opacity:1; transform:translateY(0);} }
+    .chat-bubble.them{ align-self:flex-start; background:var(--sd-bubble-them); color:var(--sd-ink); border-bottom-left-radius:4px; }
+    .chat-bubble.me{ align-self:flex-end; background:var(--sd-bubble-me); color:#fff; border-bottom-right-radius:4px; }
+    .chat-typing{ align-self:flex-start; display:flex; gap:4px; padding:12px 14px; }
+    .chat-typing span{ width:6px; height:6px; border-radius:50%; background:#b7aee0; animation:chatDot 1s infinite ease-in-out; }
+    .chat-typing span:nth-child(2){ animation-delay:.15s; }
+    .chat-typing span:nth-child(3){ animation-delay:.3s; }
+    @keyframes chatDot{ 0%,60%,100%{ transform:translateY(0); opacity:.4;} 30%{ transform:translateY(-4px); opacity:1;} }
+    .chat-options{ display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 18px; }
+    .chat-chip{
+      border:1.5px solid var(--sd-accent); background:#fff; color:var(--sd-accent);
+      border-radius:99px; padding:9px 16px; font-family:'Inter',sans-serif; font-size:.88rem; cursor:pointer;
+      transition:background .15s ease, color .15s ease, transform .1s ease;
+    }
+    .chat-chip:hover{ background:var(--sd-accent-light); }
+    .chat-chip.correct{ background:var(--sd-good); border-color:var(--sd-good); color:#fff; }
+    .chat-chip.wrong{ background:var(--sd-bad); border-color:var(--sd-bad); color:#fff; }
+    .chat-chip:disabled{ cursor:default; opacity:.55; }
+    .chat-progress{ display:flex; justify-content:center; gap:6px; padding:12px 0 0; }
+    .chat-dot{ width:7px; height:7px; border-radius:50%; background:var(--sd-line); }
+    .chat-dot.done{ background:var(--sd-accent); }
+
+    /* --- EJERCICIO 4: BANCO DE PALABRAS --- */
+    .wb-sentence{
+      font-family:'Inter',sans-serif; font-size:1.02rem; color:var(--sd-ink); line-height:1.9;
+      background:#fff; border:1px solid var(--sd-line); border-radius:14px; padding:16px 18px; margin-bottom:12px;
+    }
+    .wb-blank{
+      display:inline-block; min-width:110px; text-align:center; border-bottom:2px solid var(--sd-accent);
+      padding:2px 8px; margin:0 3px; cursor:pointer; border-radius:6px; font-weight:600; color:var(--sd-accent);
+      transition:background .15s ease;
+    }
+    .wb-blank.active{ background:var(--sd-accent-light); }
+    .wb-blank.filled{ border-bottom-style:solid; color:var(--sd-ink); }
+    .wb-blank.correct{ color:var(--sd-good); border-color:var(--sd-good); }
+    .wb-blank.wrong{ color:var(--sd-bad); border-color:var(--sd-bad); }
+    .wb-bank{ display:flex; flex-wrap:wrap; gap:8px; padding:14px 0 4px; border-top:1px dashed var(--sd-line); margin-top:8px; }
+    .wb-chip{
+      border:1.5px solid var(--sd-ink); background:#fff; color:var(--sd-ink); border-radius:10px;
+      padding:8px 14px; font-family:'IBM Plex Mono',monospace; font-size:.85rem; cursor:pointer;
+      transition:opacity .15s ease, transform .1s ease;
+    }
+    .wb-chip:hover{ transform:translateY(-1px); }
+    .wb-chip.used{ opacity:.25; pointer-events:none; }
+
+    /* --- EJERCICIO 5: DESLIZA Y DECIDE --- */
+    .swipe-stage{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .swipe-counter{ font-family:'IBM Plex Mono',monospace; font-size:.8rem; color:var(--sd-ink); opacity:.65; }
+    .swipe-deck{ position:relative; width:100%; max-width:400px; height:190px; touch-action:pan-y; }
+    .swipe-card{
+      position:absolute; inset:0; background:#fff; border:1px solid var(--sd-line); border-radius:18px;
+      box-shadow:0 10px 30px rgba(43,37,64,.10); display:flex; align-items:center; justify-content:center;
+      padding:22px; text-align:center; font-family:'Inter',sans-serif; font-size:1rem; color:var(--sd-ink);
+      cursor:grab; user-select:none; transition:transform .25s ease, opacity .25s ease;
+    }
+    .swipe-card:active{ cursor:grabbing; }
+    .swipe-card.dragging{ transition:none; }
+    .swipe-card.flyleft{ transform:translate(-160%,10%) rotate(-18deg) !important; opacity:0; }
+    .swipe-card.flyright{ transform:translate(160%,10%) rotate(18deg) !important; opacity:0; }
+    .swipe-tag{
+      position:absolute; top:14px; font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700;
+      padding:4px 10px; border-radius:6px; opacity:0; transition:opacity .1s ease;
+    }
+    .swipe-tag.left{ left:14px; border:2px solid var(--sd-good); color:var(--sd-good); transform:rotate(-8deg); }
+    .swipe-tag.right{ right:14px; border:2px solid var(--sd-bad); color:var(--sd-bad); transform:rotate(8deg); }
+    .swipe-choices{ display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:400px; }
+    .swipe-choice-btn{
+      border:1.5px solid var(--sd-accent); background:#fff; color:var(--sd-accent); border-radius:12px;
+      padding:13px 10px; font-family:'Inter',sans-serif; font-size:.88rem; font-weight:600; cursor:pointer;
+      transition:background .15s ease, transform .1s ease;
+    }
+    .swipe-choice-btn:hover{ background:var(--sd-accent-light); }
+    .swipe-choice-btn:active{ transform:scale(.97); }
+    .swipe-finish{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); padding:16px 0; }
+  </style>
+
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+<!-- HEADER (Shared from index.html) -->
+<header class="site-header">
+  <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
+ <h1>
+  <a href="index.html" class="logo-link">
+    Mundo <span>ELE</span>
+  </a>
+</h1>
+  <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
+</header>
+
+<!-- NAVBAR (Shared from index.html) -->
+<nav class="navbar" aria-label="Navegación de unidades">
+  <div class="navbar-inner" id="navbarInner">
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Elementals <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="elementals-1.html">Survival 1</a></li>
+        <li role="none"><a role="menuitem" href="saludos-despedidas.html">Saludos y despedidas</a></li>
+        <li role="none"><a role="menuitem" href="elementals-2.html">Survival 2</a></li>
+        <li role="none"><a role="menuitem" href="elementals-3.html">Survival 3</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics1-1.html">Basics 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics1-2.html">Basics 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 2 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics2-1.html">Basics 2 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics2-2.html">Basics 2 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Unit 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="unit1-1.html">Unit 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="unit1-2.html">Unit 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main-content">
+  <div class="exercise-stack">
+
+    <!-- EJERCICIO 1: ORDENA EL SALUDO -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">01</span>Ordena el saludo</h2>
+        <span class="tag mono">SORTING GAME</span>
+      </div>
+      <p class="instructions">Read the phrase and decide which group it belongs to: is it a greeting, a farewell, or a basic courtesy expression?</p>
+      <div class="sort-stage">
+        <div class="sort-progress"><div class="sort-progress-bar" id="sortProgressBar"></div></div>
+        <div class="sort-card" id="sortCard"></div>
+        <div class="sort-buckets" id="sortBuckets">
+          <button class="sort-bucket" data-cat="greeting">👋 SALUDO</button>
+          <button class="sort-bucket" data-cat="farewell">🚪 DESPEDIDA</button>
+          <button class="sort-bucket" data-cat="basic">🙏 EXPRESIÓN BÁSICA</button>
+        </div>
+        <div class="sort-tally" id="sortTally">0 / 19 clasificadas</div>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </section>
+
+    <!-- EJERCICIO 2: CONTRARRELOJ -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">02</span>Contrarreloj</h2>
+        <span class="tag mono">SPEED ROUND</span>
+      </div>
+      <p class="instructions">You have 8 seconds per question. Pick the correct meaning before time runs out.</p>
+      <div class="speed-head">
+        <div class="speed-stats">Racha: <b id="speedStreak">0</b> &nbsp;·&nbsp; Puntaje: <b id="speedScore">0</b> / 6</div>
+      </div>
+      <div class="speed-bar-track"><div class="speed-bar-fill" id="speedBarFill"></div></div>
+      <div id="speedWrap"></div>
+      <div class="feedback" id="fb2"></div>
+    </section>
+
+    <!-- EJERCICIO 3: CHAT EN VIVO -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">03</span>Chat en vivo</h2>
+        <span class="tag mono">CONVERSACIÓN</span>
+      </div>
+      <p class="instructions">Live the situation and tap the reply you'd actually use in that moment.</p>
+      <div class="chat-frame">
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-options" id="chatOptions"></div>
+        <div class="chat-progress" id="chatProgress"></div>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </section>
+
+    <!-- EJERCICIO 4: BANCO DE PALABRAS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">04</span>Banco de palabras</h2>
+        <span class="tag mono">FILL THE BLANK</span>
+      </div>
+      <p class="instructions">Tap a blank space, then tap the correct word from the bank to fill it in.</p>
+      <div id="wbSentences"></div>
+      <div class="wb-bank" id="wbBank"></div>
+      <button class="btn-action" onclick="checkWordBank()" style="margin-top:16px;">Check</button>
+      <div class="feedback" id="fb4"></div>
+    </section>
+
+    <!-- EJERCICIO 5: DESLIZA Y DECIDE -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">05</span>Desliza y decide</h2>
+        <span class="tag mono">SWIPE CARDS</span>
+      </div>
+      <p class="instructions">Read the situation. Swipe the card toward the correct option (or tap one of the buttons).</p>
+      <div class="swipe-stage">
+        <div class="swipe-counter" id="swipeCounter">1 / 6</div>
+        <div class="swipe-deck" id="swipeDeck"></div>
+        <div class="swipe-choices" id="swipeChoices"></div>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- FOOTER (Shared from index.html) -->
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="credit">Moises Coronel <span>·</span> Spanish Course</p>
+</footer>
+
+<script>
+/* =========================================================
+   NAVBAR: Funcionalidad Dropdown
+========================================================= */
+(function(){
+  "use strict";
+  var navItems = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+  var isTouchOrNoHover = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  function closeAll(exceptItem){
+    navItems.forEach(function(item){
+      if(item !== exceptItem){
+        item.classList.remove('open');
+        var btn = item.querySelector('.nav-toggle');
+        if(btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function openItem(item){
+    item.classList.add('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeItem(item){
+    item.classList.remove('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  navItems.forEach(function(item){
+    var toggle = item.querySelector('.nav-toggle');
+
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = !item.classList.contains('open');
+      closeAll(item);
+      if(willOpen){
+        openItem(item);
+      } else {
+        closeItem(item);
+      }
+    });
+
+    if(!isTouchOrNoHover){
+      item.addEventListener('mouseenter', function(){
+        closeAll(item);
+        openItem(item);
+      });
+      item.addEventListener('mouseleave', function(){
+        closeItem(item);
+      });
+    }
+
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        closeItem(item);
+        toggle.focus();
+      }
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.nav-item')){
+      closeAll(null);
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      closeAll(null);
+    }
+  });
+})();
+
+/* =========================================================
+   LÓGICA DE EJERCICIOS Y VOCABULARIO (Saludos y despedidas)
+========================================================= */
+const VOCAB = [
+  {es:"¡Hola!", en:"Hello! – Hi!", cat:"greeting"},
+  {es:"¿Qué pasa? / ¿Qué más?", en:"What's up?", cat:"greeting"},
+  {es:"¿Qué hay de nuevo?", en:"What's new?", cat:"greeting"},
+  {es:"¡Buenos días!", en:"Good morning!", cat:"greeting"},
+  {es:"¡Buenas tardes!", en:"Good afternoon!", cat:"greeting"},
+  {es:"¡Buenas noches!", en:"Good evening!", cat:"greeting"},
+  {es:"Gusto en conocerte", en:"Nice to meet you", cat:"greeting"},
+  {es:"Un placer conocerte", en:"A pleasure to meet you", cat:"greeting"},
+  {es:"¡Chao! / ¡Adiós!", en:"Bye! – Goodbye!", cat:"farewell"},
+  {es:"¡Feliz noche!", en:"Good night!", cat:"farewell"},
+  {es:"Te veo luego", en:"See you later", cat:"farewell"},
+  {es:"Te veo mañana / Hasta mañana", en:"See you tomorrow", cat:"farewell"},
+  {es:"Te veo la próxima clase", en:"See you next class", cat:"farewell"},
+  {es:"Sí", en:"Yes", cat:"basic"},
+  {es:"No", en:"No", cat:"basic"},
+  {es:"Permiso / Disculpe", en:"Excuse me", cat:"basic"},
+  {es:"Por favor", en:"Please", cat:"basic"},
+  {es:"Gracias", en:"Thank you", cat:"basic"},
+  {es:"De nada / Por nada", en:"You're welcome", cat:"basic"},
+];
+
+function normalize(str){
+  return str.trim().toLowerCase()
+    .replace(/á/g,"a").replace(/é/g,"e").replace(/í/g,"i").replace(/ó/g,"o").replace(/ú/g,"u")
+    .replace(/¿|\?|¡|!/g,"").replace(/\s+/g," ");
+}
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+/* STAMPS (silencioso si no hay elementos .stamp en esta página) */
+let stampsOn = 0;
+function earnStamp(n){
+  if(n<=stampsOn) return;
+  stampsOn = n;
+  document.querySelectorAll('.stamp').forEach(s=>{
+    if(parseInt(s.dataset.i)<=stampsOn) s.classList.add('on');
+  });
+}
+
+/* =========================================================
+   EJERCICIO 1: ORDENA EL SALUDO (sorting game, una tarjeta a la vez)
+========================================================= */
+const CAT_LABELS = {greeting:"SALUDO", farewell:"DESPEDIDA", basic:"EXPRESIÓN BÁSICA"};
+const sortDeck = shuffle(VOCAB);
+let sortIdx = 0;
+let sortCorrect = 0;
+const sortCardEl = document.getElementById('sortCard');
+const sortTallyEl = document.getElementById('sortTally');
+const sortProgressBar = document.getElementById('sortProgressBar');
+const sortBucketsEl = document.getElementById('sortBuckets');
+
+function renderSortCard(){
+  if(sortIdx >= sortDeck.length){
+    sortCardEl.textContent = "";
+    sortCardEl.innerHTML = `<div class="sort-done">¡Listo! Clasificaste ${sortCorrect} / ${sortDeck.length} correctamente 🎉</div>`;
+    sortBucketsEl.style.display = 'none';
+    const fb = document.getElementById('fb1');
+    fb.textContent = sortCorrect===sortDeck.length ? "¡Perfecto! Dominas la diferencia entre saludos, despedidas y cortesía." : `Resultado final: ${sortCorrect} / ${sortDeck.length}`;
+    fb.className = sortCorrect===sortDeck.length ? 'feedback good' : 'feedback';
+    if(sortCorrect===sortDeck.length) earnStamp(1);
+    return;
+  }
+  sortCardEl.className = 'sort-card';
+  sortCardEl.textContent = sortDeck[sortIdx].es;
+  sortTallyEl.textContent = `${sortIdx} / ${sortDeck.length} clasificadas`;
+  sortProgressBar.style.width = `${(sortIdx/sortDeck.length)*100}%`;
+}
+
+document.querySelectorAll('.sort-bucket').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(sortIdx >= sortDeck.length) return;
+    const current = sortDeck[sortIdx];
+    const chosen = btn.dataset.cat;
+    if(chosen === current.cat){
+      sortCorrect++;
+      sortCardEl.classList.add(chosen==='farewell' ? 'away-right' : (chosen==='basic' ? 'away-up' : 'away-left'));
+      setTimeout(()=>{ sortIdx++; renderSortCard(); }, 260);
+    } else {
+      sortCardEl.classList.add('shake');
+      setTimeout(()=> sortCardEl.classList.remove('shake'), 400);
+    }
+  });
+});
+renderSortCard();
+
+/* =========================================================
+   EJERCICIO 2: CONTRARRELOJ (speed multiple choice con timer)
+========================================================= */
+const speedItems = shuffle(VOCAB).slice(0,6);
+let speedIdx = 0, speedScore = 0, speedStreak = 0, speedBestStreak = 0;
+let speedTimer = null, speedTimeLeft = 8000, speedTickStart = 0;
+const speedWrap = document.getElementById('speedWrap');
+const speedBarFill = document.getElementById('speedBarFill');
+const SPEED_DURATION = 8000;
+
+function renderSpeedQuestion(){
+  clearInterval(speedTimer);
+  if(speedIdx >= speedItems.length){
+    speedWrap.innerHTML = `<div class="speed-endcard">Ronda terminada — ${speedScore} / ${speedItems.length} correctas. Mejor racha: ${speedBestStreak} 🔥</div>`;
+    speedBarFill.style.width = '0%';
+    const fb = document.getElementById('fb2');
+    fb.textContent = speedScore===speedItems.length ? "¡Reflejos de nativo! 🚀" : `Score: ${speedScore} / ${speedItems.length}`;
+    fb.className = speedScore===speedItems.length ? 'feedback good' : 'feedback';
+    if(speedScore===speedItems.length) earnStamp(2);
+    return;
+  }
+  const item = speedItems[speedIdx];
+  const wrongPool = shuffle(VOCAB.filter(v=>v.en!==item.en)).slice(0,3).map(v=>v.en);
+  const options = shuffle([item.en, ...wrongPool]);
+
+  speedWrap.innerHTML = `<div class="speed-question">“${item.es}” significa...</div><div class="speed-options"></div>`;
+  const optWrap = speedWrap.querySelector('.speed-options');
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'speed-opt';
+    b.textContent = opt;
+    b.onclick = ()=> answerSpeed(opt===item.en, b, item.en);
+    optWrap.appendChild(b);
+  });
+
+  speedTimeLeft = SPEED_DURATION;
+  speedBarFill.style.width = '100%';
+  speedBarFill.classList.remove('warn');
+  speedTickStart = Date.now();
+  speedTimer = setInterval(()=>{
+    const elapsed = Date.now() - speedTickStart;
+    const pct = Math.max(0, 100 - (elapsed / SPEED_DURATION) * 100);
+    speedBarFill.style.width = pct + '%';
+    if(pct < 25) speedBarFill.classList.add('warn');
+    if(elapsed >= SPEED_DURATION){
+      clearInterval(speedTimer);
+      answerSpeed(false, null, item.en, true);
+    }
+  }, 60);
+}
+
+function answerSpeed(isCorrect, btnEl, correctText, timedOut){
+  clearInterval(speedTimer);
+  const buttons = speedWrap.querySelectorAll('.speed-opt');
+  buttons.forEach(bt=>{
+    bt.disabled = true;
+    if(bt.textContent === correctText) bt.classList.add('correct');
+  });
+  if(btnEl && !isCorrect) btnEl.classList.add('wrong');
+
+  if(isCorrect){
+    speedScore++;
+    speedStreak++;
+    speedBestStreak = Math.max(speedBestStreak, speedStreak);
+  } else {
+    speedStreak = 0;
+  }
+  document.getElementById('speedScore').textContent = speedScore;
+  document.getElementById('speedStreak').textContent = speedStreak;
+
+  const fb = document.getElementById('fb2');
+  fb.textContent = timedOut ? "¡Se acabó el tiempo!" : (isCorrect ? "¡Correcto!" : "Casi — mira la respuesta en verde.");
+  fb.className = 'feedback';
+
+  setTimeout(()=>{ speedIdx++; renderSpeedQuestion(); }, 900);
+}
+renderSpeedQuestion();
+
+/* =========================================================
+   EJERCICIO 3: CHAT EN VIVO (conversación con desbloqueo secuencial)
+========================================================= */
+const chatSteps = [
+  {
+    context:"Son las 7:00 a.m. Entras a la cafetería y ves a tu amigo Lucas.",
+    them:"¡Buenos días! ¿Cómo amaneciste?",
+    options:["¡Buenas noches!","¡Buenos días!","Te veo luego"],
+    correct:["¡Buenos días!"]
+  },
+  {
+    context:"Estás en una fiesta y alguien se acerca a presentarse.",
+    them:"Hola, soy Valentina. Mucho gusto.",
+    options:["Un placer conocerte","De nada","Permiso"],
+    correct:["Un placer conocerte","Gusto en conocerte"]
+  },
+  {
+    context:"Un compañero te ayudó a cargar tus cosas hasta el carro.",
+    them:"Listo, ya está todo en el carro.",
+    options:["Gracias","No","Sí"],
+    correct:["Gracias"]
+  },
+  {
+    context:"Termina la clase de las 6 p.m. Verás a tu compañera la próxima semana, en la misma clase.",
+    them:"¡Chao! Fue un gusto verte hoy.",
+    options:["Te veo la próxima clase","¡Buenas tardes!","¿Qué pasa?"],
+    correct:["Te veo la próxima clase"]
+  },
+  {
+    context:"Vas caminando por un pasillo lleno de gente y necesitas pasar entre dos personas.",
+    them:"(el pasillo está bloqueado)",
+    options:["Permiso","Gracias","Hola"],
+    correct:["Permiso","Disculpe"]
+  },
+  {
+    context:"Son las 11 p.m. Apagas la luz de la habitación que compartes con tu compañero de cuarto.",
+    them:"Bueno, hasta mañana entonces.",
+    options:["¡Feliz noche!","¡Buenos días!","¿Qué hay de nuevo?"],
+    correct:["¡Feliz noche!","Te veo mañana"]
+  }
+];
+let chatIdx = 0;
+const chatLog = document.getElementById('chatLog');
+const chatOptions = document.getElementById('chatOptions');
+const chatProgress = document.getElementById('chatProgress');
+
+chatSteps.forEach((_, i)=>{
+  const d = document.createElement('div');
+  d.className = 'chat-dot';
+  d.id = `chatDot${i}`;
+  chatProgress.appendChild(d);
+});
+
+function addBubble(text, cls, isContext){
+  const el = document.createElement('div');
+  el.className = isContext ? 'chat-context' : `chat-bubble ${cls}`;
+  el.textContent = text;
+  chatLog.appendChild(el);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return el;
+}
+
+function renderChatStep(){
+  chatOptions.innerHTML = '';
+  if(chatIdx >= chatSteps.length){
+    const fb = document.getElementById('fb3');
+    fb.textContent = "¡Conversación completa! 💬";
+    fb.className = 'feedback good';
+    earnStamp(3);
+    return;
+  }
+  const step = chatSteps[chatIdx];
+  addBubble(step.context, null, true);
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  chatLog.appendChild(typing);
+
+  setTimeout(()=>{
+    typing.remove();
+    addBubble(step.them, 'them');
+    shuffle(step.options).forEach(opt=>{
+      const chip = document.createElement('button');
+      chip.className = 'chat-chip';
+      chip.textContent = opt;
+      chip.onclick = ()=>{
+        const chips = chatOptions.querySelectorAll('.chat-chip');
+        const isCorrect = step.correct.includes(opt);
+        if(isCorrect){
+          chips.forEach(c=>c.disabled=true);
+          chip.classList.add('correct');
+          addBubble(opt, 'me');
+          document.getElementById(`chatDot${chatIdx}`).classList.add('done');
+          chatIdx++;
+          setTimeout(renderChatStep, 500);
+        } else {
+          chip.classList.add('wrong');
+          chip.disabled = true;
+        }
+      };
+      chatOptions.appendChild(chip);
+    });
+  }, 650);
+}
+renderChatStep();
+
+/* =========================================================
+   EJERCICIO 4: BANCO DE PALABRAS (fill in the blank por clic)
+========================================================= */
+const wbData = [
+  {parts:["", "___", ", profesora, ¿puedo salir un momento?"], answer:"Permiso"},
+  {parts:["Muchas gracias por tu ayuda.", "___", "."], answer:"De nada"},
+  {parts:["", "___", " tardes, ¿tiene mesa para dos?"], answer:"Buenas"},
+  {parts:["No hablo mucho español, pero puedo intentar.", "___", ", ¿puedes repetir?"], answer:"Por favor"},
+  {parts:["Fue un placer hablar contigo.", "___", ", nos vemos pronto."], answer:"Chao"},
+  {parts:["", "___", "! Soy Carlos, mucho gusto."], answer:"Hola"}
+];
+const wbDistractors = ["Gracias","Sí","No","¡Buenos días!","Te veo luego","De nada"];
+const wbSentencesEl = document.getElementById('wbSentences');
+const wbBankEl = document.getElementById('wbBank');
+let wbActiveBlank = null;
+
+const wbAnswers = wbData.map(d=>d.answer);
+const wbBankWords = shuffle([...new Set([...wbAnswers, ...wbDistractors])]).slice(0, Math.max(8, wbAnswers.length+3));
+if(!wbBankWords.includes(wbAnswers[wbAnswers.length-1])){ wbBankWords[0] = wbAnswers[wbAnswers.length-1]; }
+
+wbData.forEach((sent, si)=>{
+  const p = document.createElement('div');
+  p.className = 'wb-sentence';
+  sent.parts.forEach(part=>{
+    if(part === '___'){
+      const blankSpan = document.createElement('span');
+      blankSpan.className = 'wb-blank';
+      blankSpan.dataset.sentIdx = si;
+      blankSpan.dataset.answer = sent.answer;
+      blankSpan.textContent = '______';
+      blankSpan.onclick = ()=> selectBlank(blankSpan);
+      p.appendChild(blankSpan);
+    } else if(part){
+      p.appendChild(document.createTextNode(part));
+    }
+  });
+  wbSentencesEl.appendChild(p);
+});
+
+wbBankWords.forEach(word=>{
+  const chip = document.createElement('button');
+  chip.className = 'wb-chip';
+  chip.textContent = word;
+  chip.onclick = ()=> fillActiveBlank(chip);
+  wbBankEl.appendChild(chip);
+});
+
+function selectBlank(blankEl){
+  if(blankEl.classList.contains('filled')){
+    const chip = [...wbBankEl.querySelectorAll('.wb-chip')].find(c=>c.textContent===blankEl.textContent);
+    if(chip) chip.classList.remove('used');
+    blankEl.textContent = '______';
+    blankEl.classList.remove('filled','correct','wrong');
+    return;
+  }
+  if(wbActiveBlank) wbActiveBlank.classList.remove('active');
+  wbActiveBlank = blankEl;
+  blankEl.classList.add('active');
+}
+
+function fillActiveBlank(chip){
+  if(chip.classList.contains('used')) return;
+  if(!wbActiveBlank){
+    const nextEmpty = wbSentencesEl.querySelector('.wb-blank:not(.filled)');
+    if(!nextEmpty) return;
+    wbActiveBlank = nextEmpty;
+  }
+  wbActiveBlank.textContent = chip.textContent;
+  wbActiveBlank.classList.add('filled');
+  wbActiveBlank.classList.remove('active','correct','wrong');
+  chip.classList.add('used');
+  wbActiveBlank = null;
+}
+
+function checkWordBank(){
+  const blanks = wbSentencesEl.querySelectorAll('.wb-blank');
+  let correct = 0;
+  blanks.forEach(b=>{
+    b.classList.remove('correct','wrong');
+    if(!b.classList.contains('filled')){ b.classList.add('wrong'); return; }
+    if(normalize(b.textContent) === normalize(b.dataset.answer)){
+      b.classList.add('correct'); correct++;
+    } else {
+      b.classList.add('wrong');
+    }
+  });
+  const fb = document.getElementById('fb4');
+  if(correct === blanks.length){
+    fb.textContent = `¡Perfecto! ${correct}/${blanks.length} correctas.`;
+    fb.className = 'feedback good';
+    earnStamp(4);
+  } else {
+    fb.textContent = `${correct}/${blanks.length} correctas. Revisa los espacios en rojo.`;
+    fb.className = 'feedback bad';
+  }
+}
+
+/* =========================================================
+   EJERCICIO 5: DESLIZA Y DECIDE (swipe cards estilo Tinder)
+========================================================= */
+const swipeScenarios = shuffle([
+  {situation:"Suena tu despertador y saludas a tu compañero de cuarto.", left:"¡Buenos días!", right:"¡Buenas noches!", correctSide:"left"},
+  {situation:"Son las 9 p.m. y saludas a tus vecinos en el pasillo.", left:"¡Buenos días!", right:"¡Buenas noches!", correctSide:"right"},
+  {situation:"Un amigo te ayuda a mudarte y quieres agradecerle.", left:"Permiso", right:"Gracias", correctSide:"right"},
+  {situation:"Alguien te dice 'Gracias' y respondes.", left:"De nada", right:"No", correctSide:"left"},
+  {situation:"Sales del salón por error y necesitas pasar entre dos compañeros.", left:"Permiso", right:"Un placer conocerte", correctSide:"left"},
+  {situation:"Terminas tu clase del jueves; verás a tu compañera en la próxima clase.", left:"¿Qué pasa?", right:"Te veo la próxima clase", correctSide:"right"}
+]);
+let swipeIdx = 0, swipeCorrect = 0;
+const swipeDeck = document.getElementById('swipeDeck');
+const swipeChoices = document.getElementById('swipeChoices');
+const swipeCounter = document.getElementById('swipeCounter');
+
+function renderSwipeCard(){
+  swipeChoices.innerHTML = '';
+  swipeDeck.innerHTML = '';
+  if(swipeIdx >= swipeScenarios.length){
+    swipeDeck.innerHTML = `<div class="swipe-finish">Terminaste — ${swipeCorrect} / ${swipeScenarios.length} correctas ✅</div>`;
+    swipeCounter.textContent = `${swipeScenarios.length} / ${swipeScenarios.length}`;
+    const fb = document.getElementById('fb5');
+    fb.textContent = swipeCorrect===swipeScenarios.length ? "¡Decisiones perfectas! 🎯" : `Score: ${swipeCorrect} / ${swipeScenarios.length}`;
+    fb.className = swipeCorrect===swipeScenarios.length ? 'feedback good' : 'feedback';
+    if(swipeCorrect===swipeScenarios.length) earnStamp(5);
+    return;
+  }
+  swipeCounter.textContent = `${swipeIdx+1} / ${swipeScenarios.length}`;
+  const sc = swipeScenarios[swipeIdx];
+
+  const card = document.createElement('div');
+  card.className = 'swipe-card';
+  card.innerHTML = `
+    <span class="swipe-tag left" id="tagLeft">${sc.left}</span>
+    <span class="swipe-tag right" id="tagRight">${sc.right}</span>
+    <span>${sc.situation}</span>`;
+  swipeDeck.appendChild(card);
+
+  [['left', sc.left], ['right', sc.right]].forEach(([side, label])=>{
+    const btn = document.createElement('button');
+    btn.className = 'swipe-choice-btn';
+    btn.textContent = label;
+    btn.onclick = ()=> resolveSwipe(side, sc, card);
+    swipeChoices.appendChild(btn);
+  });
+
+  attachSwipeDrag(card, sc);
+}
+
+function resolveSwipe(side, sc, card){
+  const isCorrect = side === sc.correctSide;
+  if(isCorrect) swipeCorrect++;
+  card.classList.add(side === 'left' ? 'flyleft' : 'flyright');
+  const fb = document.getElementById('fb5');
+  fb.textContent = isCorrect ? "¡Correcto!" : `Casi — la respuesta correcta era "${sc.correctSide==='left'?sc.left:sc.right}".`;
+  fb.className = 'feedback';
+  swipeChoices.querySelectorAll('button').forEach(b=>b.disabled=true);
+  setTimeout(()=>{ swipeIdx++; renderSwipeCard(); }, 380);
+}
+
+function attachSwipeDrag(card, sc){
+  let startX = 0, dx = 0, dragging = false;
+
+  function pointerDown(e){
+    dragging = true;
+    card.classList.add('dragging');
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+  }
+  function pointerMove(e){
+    if(!dragging) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    dx = x - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
+    document.getElementById('tagLeft').style.opacity = dx < -20 ? Math.min(1, -dx/80) : 0;
+    document.getElementById('tagRight').style.opacity = dx > 20 ? Math.min(1, dx/80) : 0;
+  }
+  function pointerUp(){
+    if(!dragging) return;
+    dragging = false;
+    card.classList.remove('dragging');
+    if(dx < -70){ resolveSwipe('left', sc, card); }
+    else if(dx > 70){ resolveSwipe('right', sc, card); }
+    else { card.style.transform = ''; }
+    dx = 0;
+  }
+
+  card.addEventListener('mousedown', pointerDown);
+  window.addEventListener('mousemove', pointerMove);
+  window.addEventListener('mouseup', pointerUp);
+  card.addEventListener('touchstart', pointerDown, {passive:true});
+  card.addEventListener('touchmove', pointerMove, {passive:true});
+  card.addEventListener('touchend', pointerUp);
+}
+renderSwipeCard();
+</script>
+
+</body>
+</html>
