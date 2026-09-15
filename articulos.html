@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artículos · Practice — Mundo ELE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* =========================================================
+       ESTILOS EXTRA PARA LOS WIDGETS INTERACTIVOS DE ESTA LECCIÓN
+       (Se apoyan en las clases compartidas de style.css:
+        .card, .card-head, .idx, .tag.mono, .instructions,
+        .feedback, .btn-action — y añaden solo lo necesario
+        para los componentes nuevos)
+    ========================================================= */
+    :root{
+      --sd-ink:#2b2540;
+      --sd-accent:#4b3f7a;
+      --sd-accent-light:#efeaff;
+      --sd-good:#1f8a5c;
+      --sd-bad:#c14545;
+      --sd-line:#e4e0f2;
+      --sd-bubble-them:#f2f0fa;
+      --sd-bubble-me:#4b3f7a;
+    }
+
+    /* --- EJERCICIO 1: GENDER DETECTIVE (sorting game, 2 buckets) --- */
+    .sort-stage{ display:flex; flex-direction:column; align-items:center; gap:20px; }
+    .sort-progress{ width:100%; max-width:420px; height:6px; background:var(--sd-line); border-radius:99px; overflow:hidden; }
+    .sort-progress-bar{ height:100%; background:var(--sd-accent); width:0%; transition:width .35s ease; }
+    .sort-card{
+      width:100%; max-width:420px; min-height:110px;
+      background:#fff; border:1px solid var(--sd-line); border-radius:16px;
+      display:flex; align-items:center; justify-content:center; text-align:center;
+      padding:24px; font-family:'Oswald',sans-serif; font-size:1.5rem; color:var(--sd-ink);
+      box-shadow:0 6px 20px rgba(43,37,64,.08);
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .sort-card.away-left{ transform:translateX(-140%) rotate(-8deg); opacity:0; }
+    .sort-card.away-right{ transform:translateX(140%) rotate(8deg); opacity:0; }
+    .sort-card.shake{ animation:sortShake .4s; }
+    @keyframes sortShake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+    .sort-buckets-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; width:100%; max-width:420px; }
+    .sort-bucket{
+      border:2px solid var(--sd-accent); background:#fff; color:var(--sd-accent);
+      border-radius:12px; padding:16px 8px; font-family:'Oswald',sans-serif;
+      font-size:1.1rem; font-weight:600; letter-spacing:.02em; cursor:pointer; text-align:center;
+      transition:background .15s ease, color .15s ease, transform .1s ease;
+    }
+    .sort-bucket:hover{ background:var(--sd-accent-light); }
+    .sort-bucket:active{ transform:scale(.96); }
+    .sort-tally{ font-family:'IBM Plex Mono',monospace; font-size:.85rem; color:var(--sd-ink); opacity:.7; }
+    .sort-done{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); }
+
+    /* --- EJERCICIO 2: CONTRARRELOJ DE ARTÍCULOS --- */
+    .speed-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+    .speed-stats{ display:flex; gap:18px; font-family:'IBM Plex Mono',monospace; font-size:.85rem; color:var(--sd-ink); }
+    .speed-stats b{ color:var(--sd-accent); }
+    .speed-bar-track{ width:100%; height:8px; background:var(--sd-line); border-radius:99px; overflow:hidden; margin-bottom:18px; }
+    .speed-bar-fill{ height:100%; background:linear-gradient(90deg,var(--sd-accent),#8b7ff0); width:100%; transition:width .1s linear; }
+    .speed-bar-fill.warn{ background:linear-gradient(90deg,#c14545,#e07a5f); }
+    .speed-question{ font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--sd-ink); text-align:center; margin-bottom:16px; }
+    .speed-question em{ color:var(--sd-accent); font-style:normal; border-bottom:2px dotted var(--sd-accent); }
+    .speed-options{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:520px){ .speed-options{ grid-template-columns:1fr; } }
+    .speed-opt{
+      border:1.5px solid var(--sd-line); background:#fff; border-radius:12px; padding:14px;
+      font-family:'Oswald',sans-serif; font-size:1.1rem; color:var(--sd-ink); cursor:pointer; text-align:center;
+      transition:border-color .15s ease, background .15s ease;
+    }
+    .speed-opt:hover{ border-color:var(--sd-accent); }
+    .speed-opt.correct{ background:#e7f7ef; border-color:var(--sd-good); color:var(--sd-good); font-weight:600; }
+    .speed-opt.wrong{ background:#fbeaea; border-color:var(--sd-bad); color:var(--sd-bad); }
+    .speed-opt:disabled{ cursor:default; }
+    .speed-endcard{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); padding:20px 0; }
+
+    /* --- EJERCICIO 3: CADENA DE MENSAJES (al / del) --- */
+    .chat-frame{
+      max-width:480px; margin:0 auto; border:1px solid var(--sd-line); border-radius:18px;
+      background:#fbfaff; overflow:hidden;
+    }
+    .chat-log{ padding:18px; display:flex; flex-direction:column; gap:10px; min-height:120px; }
+    .chat-context{
+      align-self:center; background:#fff; border:1px dashed var(--sd-line); color:var(--sd-ink); opacity:.75;
+      font-family:'Inter',sans-serif; font-size:.8rem; text-align:center; border-radius:10px; padding:8px 14px; max-width:90%;
+    }
+    .chat-bubble{
+      max-width:82%; padding:10px 14px; border-radius:16px; font-family:'Inter',sans-serif; font-size:.95rem; line-height:1.4;
+      opacity:0; transform:translateY(6px); animation:chatIn .3s ease forwards;
+    }
+    @keyframes chatIn{ to{ opacity:1; transform:translateY(0);} }
+    .chat-bubble.them{ align-self:flex-start; background:var(--sd-bubble-them); color:var(--sd-ink); border-bottom-left-radius:4px; }
+    .chat-bubble.me{ align-self:flex-end; background:var(--sd-bubble-me); color:#fff; border-bottom-right-radius:4px; }
+    .chat-bubble .blank-fill{ font-weight:700; text-decoration:underline; }
+    .chat-typing{ align-self:flex-start; display:flex; gap:4px; padding:12px 14px; }
+    .chat-typing span{ width:6px; height:6px; border-radius:50%; background:#b7aee0; animation:chatDot 1s infinite ease-in-out; }
+    .chat-typing span:nth-child(2){ animation-delay:.15s; }
+    .chat-typing span:nth-child(3){ animation-delay:.3s; }
+    @keyframes chatDot{ 0%,60%,100%{ transform:translateY(0); opacity:.4;} 30%{ transform:translateY(-4px); opacity:1;} }
+    .chat-options{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:0 18px 18px; }
+    .chat-chip{
+      border:1.5px solid var(--sd-accent); background:#fff; color:var(--sd-accent);
+      border-radius:99px; padding:10px 28px; font-family:'Oswald',sans-serif; font-size:1rem; font-weight:600; cursor:pointer;
+      transition:background .15s ease, color .15s ease, transform .1s ease;
+    }
+    .chat-chip:hover{ background:var(--sd-accent-light); }
+    .chat-chip.correct{ background:var(--sd-good); border-color:var(--sd-good); color:#fff; }
+    .chat-chip.wrong{ background:var(--sd-bad); border-color:var(--sd-bad); color:#fff; }
+    .chat-chip:disabled{ cursor:default; opacity:.55; }
+    .chat-progress{ display:flex; justify-content:center; gap:6px; padding:12px 0 0; }
+    .chat-dot{ width:7px; height:7px; border-radius:50%; background:var(--sd-line); }
+    .chat-dot.done{ background:var(--sd-accent); }
+
+    /* --- EJERCICIO 4: BANCO DE PALABRAS --- */
+    .wb-sentence{
+      font-family:'Inter',sans-serif; font-size:1.02rem; color:var(--sd-ink); line-height:1.9;
+      background:#fff; border:1px solid var(--sd-line); border-radius:14px; padding:16px 18px; margin-bottom:12px;
+    }
+    .wb-blank{
+      display:inline-block; min-width:90px; text-align:center; border-bottom:2px solid var(--sd-accent);
+      padding:2px 8px; margin:0 3px; cursor:pointer; border-radius:6px; font-weight:600; color:var(--sd-accent);
+      transition:background .15s ease;
+    }
+    .wb-blank.active{ background:var(--sd-accent-light); }
+    .wb-blank.filled{ border-bottom-style:solid; color:var(--sd-ink); }
+    .wb-blank.correct{ color:var(--sd-good); border-color:var(--sd-good); }
+    .wb-blank.wrong{ color:var(--sd-bad); border-color:var(--sd-bad); }
+    .wb-bank{ display:flex; flex-wrap:wrap; gap:8px; padding:14px 0 4px; border-top:1px dashed var(--sd-line); margin-top:8px; }
+    .wb-chip{
+      border:1.5px solid var(--sd-ink); background:#fff; color:var(--sd-ink); border-radius:10px;
+      padding:8px 14px; font-family:'IBM Plex Mono',monospace; font-size:.85rem; cursor:pointer;
+      transition:opacity .15s ease, transform .1s ease;
+    }
+    .wb-chip:hover{ transform:translateY(-1px); }
+    .wb-chip.used{ opacity:.25; pointer-events:none; }
+
+    /* --- EJERCICIO 5: MEMORIA DE ARTÍCULOS (juego de memoria) --- */
+    .memory-stats{ text-align:center; font-family:'IBM Plex Mono',monospace; font-size:.85rem; color:var(--sd-ink); opacity:.75; margin-bottom:14px; }
+    .memory-stats b{ color:var(--sd-accent); opacity:1; }
+    .memory-grid{
+      display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+      max-width:500px; margin:0 auto;
+    }
+    @media (max-width:520px){ .memory-grid{ grid-template-columns:repeat(3,1fr); } }
+    .memory-card{ position:relative; height:88px; cursor:pointer; perspective:700px; }
+    .memory-card-inner{
+      position:relative; width:100%; height:100%; transition:transform .45s ease;
+      transform-style:preserve-3d;
+    }
+    .memory-card.flipped .memory-card-inner,
+    .memory-card.matched .memory-card-inner{ transform:rotateY(180deg); }
+    .memory-face{
+      position:absolute; inset:0; backface-visibility:hidden; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; text-align:center; padding:6px 4px;
+      font-family:'Inter',sans-serif; font-size:.82rem; line-height:1.25;
+    }
+    .memory-face.front{
+      background:linear-gradient(135deg,var(--sd-accent),#6a5cae); color:#fff;
+      font-family:'Oswald',sans-serif; font-size:1.5rem;
+    }
+    .memory-face.back{
+      background:#fff; border:1.5px solid var(--sd-accent); color:var(--sd-ink); transform:rotateY(180deg);
+      font-weight:600;
+    }
+    .memory-card.matched .memory-face.back{ background:#e7f7ef; border-color:var(--sd-good); color:var(--sd-good); }
+    .memory-card.mismatch .memory-face.back{ background:#fbeaea; border-color:var(--sd-bad); color:var(--sd-bad); }
+    .memory-done{ text-align:center; font-family:'Oswald',sans-serif; font-size:1.2rem; color:var(--sd-ink); padding:16px 0; }
+  </style>
+
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+<!-- HEADER (Shared from index.html) -->
+<header class="site-header">
+  <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
+ <h1>
+  <a href="index.html" class="logo-link">
+    Mundo <span>ELE</span>
+  </a>
+</h1>
+  <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
+</header>
+
+<!-- NAVBAR (Shared from index.html) -->
+<nav class="navbar" aria-label="Navegación de unidades">
+  <div class="navbar-inner" id="navbarInner">
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Elementals <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="elementals-1.html">Survival 1</a></li>
+        <li role="none"><a role="menuitem" href="elementals-2.html">Survival 2</a></li>
+        <li role="none"><a role="menuitem" href="elementals-3.html">Survival 3</a></li>
+        <li role="none"><a role="menuitem" href="vocabulary-1.html">Vocabulary 1</a></li>
+        <li role="none"><a role="menuitem" href="saludos-despedidas.html">Greetings and goodbyes, basic expressions</a></li>
+        <li role="none"><a role="menuitem" href="articulos.html">Artículos</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics1-1.html">Basics 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics1-2.html">Basics 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Basics 2 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="basics2-1.html">Basics 2 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="basics2-2.html">Basics 2 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-toggle" aria-expanded="false" aria-haspopup="true">
+        Unit 1 <span class="caret">▼</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li role="none"><a role="menuitem" href="unit1-1.html">Unit 1 - Lesson 1</a></li>
+        <li role="none"><a role="menuitem" href="unit1-2.html">Unit 1 - Lesson 2</a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main-content">
+  <div class="exercise-stack">
+
+    <!-- EJERCICIO 1: GENDER DETECTIVE -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">01</span>Gender detective</h2>
+        <span class="tag mono">SORTING GAME</span>
+      </div>
+      <p class="instructions">Read the noun and decide: does it take "el" or "la"? Watch out — some endings are tricky!</p>
+      <div class="sort-stage">
+        <div class="sort-progress"><div class="sort-progress-bar" id="sortProgressBar"></div></div>
+        <div class="sort-card" id="sortCard"></div>
+        <div class="sort-buckets-2" id="sortBuckets">
+          <button class="sort-bucket" data-cat="m">EL — masculine</button>
+          <button class="sort-bucket" data-cat="f">LA — feminine</button>
+        </div>
+        <div class="sort-tally" id="sortTally">0 / 16 sorted</div>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </section>
+
+    <!-- EJERCICIO 2: CONTRARRELOJ DE ARTÍCULOS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">02</span>Article speed round</h2>
+        <span class="tag mono">SPEED ROUND</span>
+      </div>
+      <p class="instructions">You have 8 seconds per question. Pick the definite article ("el", "la", "los" or "las") that matches the noun.</p>
+      <div class="speed-head">
+        <div class="speed-stats">Streak: <b id="speedStreak">0</b> &nbsp;·&nbsp; Score: <b id="speedScore">0</b> / 6</div>
+      </div>
+      <div class="speed-bar-track"><div class="speed-bar-fill" id="speedBarFill"></div></div>
+      <div id="speedWrap"></div>
+      <div class="feedback" id="fb2"></div>
+    </section>
+
+    <!-- EJERCICIO 3: CADENA DE MENSAJES -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">03</span>Message chain</h2>
+        <span class="tag mono">AL / DEL</span>
+      </div>
+      <p class="instructions">Complete each text message with the correct contraction: "al" (a + el) or "del" (de + el).</p>
+      <div class="chat-frame">
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-options" id="chatOptions"></div>
+        <div class="chat-progress" id="chatProgress"></div>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </section>
+
+    <!-- EJERCICIO 4: BANCO DE PALABRAS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">04</span>Word bank</h2>
+        <span class="tag mono">FILL THE BLANK</span>
+      </div>
+      <p class="instructions">Tap a blank space, then tap the correct article from the bank to complete each sentence.</p>
+      <div id="wbSentences"></div>
+      <div class="wb-bank" id="wbBank"></div>
+      <button class="btn-action" onclick="checkWordBank()" style="margin-top:16px;">Check</button>
+      <div class="feedback" id="fb4"></div>
+    </section>
+
+    <!-- EJERCICIO 5: MEMORIA DE ARTÍCULOS -->
+    <section class="card">
+      <div class="card-head">
+        <h2><span class="idx">05</span>Article memory</h2>
+        <span class="tag mono">MEMORY MATCH</span>
+      </div>
+      <p class="instructions">Flip two cards at a time and match each singular noun (with "el"/"la") to its plural form (with "los"/"las").</p>
+      <div class="memory-stats">Moves: <b id="memMoves">0</b> &nbsp;·&nbsp; Matches: <b id="memMatches">0</b> / 6</div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="feedback" id="fb5"></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- FOOTER (Shared from index.html) -->
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="credit">Moises Coronel <span>·</span> Spanish Course</p>
+</footer>
+
+<script>
+/* =========================================================
+   NAVBAR: Funcionalidad Dropdown
+========================================================= */
+(function(){
+  "use strict";
+  var navItems = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+  var isTouchOrNoHover = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  function closeAll(exceptItem){
+    navItems.forEach(function(item){
+      if(item !== exceptItem){
+        item.classList.remove('open');
+        var btn = item.querySelector('.nav-toggle');
+        if(btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function openItem(item){
+    item.classList.add('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeItem(item){
+    item.classList.remove('open');
+    var btn = item.querySelector('.nav-toggle');
+    if(btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  navItems.forEach(function(item){
+    var toggle = item.querySelector('.nav-toggle');
+
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = !item.classList.contains('open');
+      closeAll(item);
+      if(willOpen){
+        openItem(item);
+      } else {
+        closeItem(item);
+      }
+    });
+
+    if(!isTouchOrNoHover){
+      item.addEventListener('mouseenter', function(){
+        closeAll(item);
+        openItem(item);
+      });
+      item.addEventListener('mouseleave', function(){
+        closeItem(item);
+      });
+    }
+
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        closeItem(item);
+        toggle.focus();
+      }
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.nav-item')){
+      closeAll(null);
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      closeAll(null);
+    }
+  });
+})();
+
+/* =========================================================
+   LÓGICA DE EJERCICIOS (Artículos)
+========================================================= */
+function normalize(str){
+  return str.trim().toLowerCase()
+    .replace(/á/g,"a").replace(/é/g,"e").replace(/í/g,"i").replace(/ó/g,"o").replace(/ú/g,"u")
+    .replace(/¿|\?|¡|!/g,"").replace(/\s+/g," ");
+}
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+let stampsOn = 0;
+function earnStamp(n){
+  if(n<=stampsOn) return;
+  stampsOn = n;
+  document.querySelectorAll('.stamp').forEach(s=>{
+    if(parseInt(s.dataset.i)<=stampsOn) s.classList.add('on');
+  });
+}
+
+/* =========================================================
+   EJERCICIO 1: GENDER DETECTIVE (sorting game, una tarjeta a la vez)
+========================================================= */
+const GENDER_WORDS = shuffle([
+  {word:"amigo", cat:"m"},
+  {word:"zapato", cat:"m"},
+  {word:"taxi", cat:"m"},
+  {word:"restaurante", cat:"m"},
+  {word:"color", cat:"m"},
+  {word:"viaje", cat:"m"},
+  {word:"capitán", cat:"m"},
+  {word:"problema", cat:"m"},
+  {word:"clase", cat:"f"},
+  {word:"periodista", cat:"f"},
+  {word:"casa", cat:"f"},
+  {word:"verdad", cat:"f"},
+  {word:"canción", cat:"f"},
+  {word:"pasión", cat:"f"},
+  {word:"calle", cat:"f"},
+  {word:"mesa", cat:"f"}
+]);
+let sortIdx = 0;
+let sortCorrect = 0;
+const sortCardEl = document.getElementById('sortCard');
+const sortTallyEl = document.getElementById('sortTally');
+const sortProgressBar = document.getElementById('sortProgressBar');
+const sortBucketsEl = document.getElementById('sortBuckets');
+
+function renderSortCard(){
+  if(sortIdx >= GENDER_WORDS.length){
+    sortCardEl.innerHTML = `<div class="sort-done">Done! You sorted ${sortCorrect} / ${GENDER_WORDS.length} correctly 🎉</div>`;
+    sortBucketsEl.style.display = 'none';
+    const fb = document.getElementById('fb1');
+    fb.textContent = sortCorrect===GENDER_WORDS.length ? "Perfect! You've got a great eye for gender endings." : `Final score: ${sortCorrect} / ${GENDER_WORDS.length}`;
+    fb.className = sortCorrect===GENDER_WORDS.length ? 'feedback good' : 'feedback';
+    if(sortCorrect===GENDER_WORDS.length) earnStamp(1);
+    return;
+  }
+  sortCardEl.className = 'sort-card';
+  sortCardEl.textContent = GENDER_WORDS[sortIdx].word;
+  sortTallyEl.textContent = `${sortIdx} / ${GENDER_WORDS.length} sorted`;
+  sortProgressBar.style.width = `${(sortIdx/GENDER_WORDS.length)*100}%`;
+}
+
+document.querySelectorAll('.sort-bucket').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(sortIdx >= GENDER_WORDS.length) return;
+    const current = GENDER_WORDS[sortIdx];
+    const chosen = btn.dataset.cat;
+    if(chosen === current.cat){
+      sortCorrect++;
+      sortCardEl.classList.add(chosen==='m' ? 'away-left' : 'away-right');
+      setTimeout(()=>{ sortIdx++; renderSortCard(); }, 260);
+    } else {
+      sortCardEl.classList.add('shake');
+      setTimeout(()=> sortCardEl.classList.remove('shake'), 400);
+    }
+  });
+});
+renderSortCard();
+
+/* =========================================================
+   EJERCICIO 2: CONTRARRELOJ DE ARTÍCULOS
+========================================================= */
+const speedItems = shuffle([
+  {noun:"amigo", correct:"el"},
+  {noun:"clase", correct:"la"},
+  {noun:"zapatos", correct:"los"},
+  {noun:"periodistas", correct:"las"},
+  {noun:"restaurante", correct:"el"},
+  {noun:"canción", correct:"la"}
+]);
+let speedIdx = 0, speedScore = 0, speedStreak = 0, speedBestStreak = 0;
+let speedTimer = null, speedTickStart = 0;
+const speedWrap = document.getElementById('speedWrap');
+const speedBarFill = document.getElementById('speedBarFill');
+const SPEED_DURATION = 8000;
+const ARTICLE_OPTIONS = ["el","la","los","las"];
+
+function renderSpeedQuestion(){
+  clearInterval(speedTimer);
+  if(speedIdx >= speedItems.length){
+    speedWrap.innerHTML = `<div class="speed-endcard">Round over — ${speedScore} / ${speedItems.length} correct. Best streak: ${speedBestStreak} 🔥</div>`;
+    speedBarFill.style.width = '0%';
+    const fb = document.getElementById('fb2');
+    fb.textContent = speedScore===speedItems.length ? "Native-speaker reflexes! 🚀" : `Score: ${speedScore} / ${speedItems.length}`;
+    fb.className = speedScore===speedItems.length ? 'feedback good' : 'feedback';
+    if(speedScore===speedItems.length) earnStamp(2);
+    return;
+  }
+  const item = speedItems[speedIdx];
+  const options = shuffle(ARTICLE_OPTIONS);
+
+  speedWrap.innerHTML = `<div class="speed-question">___ <em>${item.noun}</em></div><div class="speed-options"></div>`;
+  const optWrap = speedWrap.querySelector('.speed-options');
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'speed-opt';
+    b.textContent = opt;
+    b.onclick = ()=> answerSpeed(opt===item.correct, b, item.correct);
+    optWrap.appendChild(b);
+  });
+
+  speedBarFill.style.width = '100%';
+  speedBarFill.classList.remove('warn');
+  speedTickStart = Date.now();
+  speedTimer = setInterval(()=>{
+    const elapsed = Date.now() - speedTickStart;
+    const pct = Math.max(0, 100 - (elapsed / SPEED_DURATION) * 100);
+    speedBarFill.style.width = pct + '%';
+    if(pct < 25) speedBarFill.classList.add('warn');
+    if(elapsed >= SPEED_DURATION){
+      clearInterval(speedTimer);
+      answerSpeed(false, null, item.correct, true);
+    }
+  }, 60);
+}
+
+function answerSpeed(isCorrect, btnEl, correctText, timedOut){
+  clearInterval(speedTimer);
+  const buttons = speedWrap.querySelectorAll('.speed-opt');
+  buttons.forEach(bt=>{
+    bt.disabled = true;
+    if(bt.textContent === correctText) bt.classList.add('correct');
+  });
+  if(btnEl && !isCorrect) btnEl.classList.add('wrong');
+
+  if(isCorrect){
+    speedScore++;
+    speedStreak++;
+    speedBestStreak = Math.max(speedBestStreak, speedStreak);
+  } else {
+    speedStreak = 0;
+  }
+  document.getElementById('speedScore').textContent = speedScore;
+  document.getElementById('speedStreak').textContent = speedStreak;
+
+  const fb = document.getElementById('fb2');
+  fb.textContent = timedOut ? "Time's up!" : (isCorrect ? "Correct!" : "Check the correct answer in green.");
+  fb.className = 'feedback';
+
+  setTimeout(()=>{ speedIdx++; renderSpeedQuestion(); }, 900);
+}
+renderSpeedQuestion();
+
+/* =========================================================
+   EJERCICIO 3: CADENA DE MENSAJES (al / del)
+========================================================= */
+const chatSteps = [
+  { context:"Your friend Nathaly is texting about her trip.", before:"Nathaly vendrá ", after:"amanecer.", correct:"al" },
+  { context:"Someone at the clinic asks about a patient.", before:"El enfermo irá ", after:"hospital.", correct:"al" },
+  { context:"A classmate is reviewing the syllabus.", before:"Esas son lecciones ", after:"idioma.", correct:"del" },
+  { context:"You're introducing a friend of a friend.", before:"Ella es amiga ", after:"ingeniero.", correct:"del" },
+  { context:"Describing a family dinner.", before:"La familia escucha ", after:"niño.", correct:"al" },
+  { context:"Handing someone their car keys.", before:"Estas son las llaves ", after:"carro.", correct:"del" }
+];
+let chatIdx = 0;
+const chatLog = document.getElementById('chatLog');
+const chatOptions = document.getElementById('chatOptions');
+const chatProgress = document.getElementById('chatProgress');
+
+chatSteps.forEach((_, i)=>{
+  const d = document.createElement('div');
+  d.className = 'chat-dot';
+  d.id = `chatDot${i}`;
+  chatProgress.appendChild(d);
+});
+
+function addBubble(html, cls, isContext){
+  const el = document.createElement('div');
+  el.className = isContext ? 'chat-context' : `chat-bubble ${cls}`;
+  el.innerHTML = html;
+  chatLog.appendChild(el);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return el;
+}
+
+function renderChatStep(){
+  chatOptions.innerHTML = '';
+  if(chatIdx >= chatSteps.length){
+    const fb = document.getElementById('fb3');
+    fb.textContent = "Message chain complete! 💬";
+    fb.className = 'feedback good';
+    earnStamp(3);
+    return;
+  }
+  const step = chatSteps[chatIdx];
+  addBubble(step.context, null, true);
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  chatLog.appendChild(typing);
+
+  setTimeout(()=>{
+    typing.remove();
+    addBubble(`${step.before}<span class="blank-fill">___</span> ${step.after}`, 'them');
+    ["al","del"].forEach(opt=>{
+      const chip = document.createElement('button');
+      chip.className = 'chat-chip';
+      chip.textContent = opt;
+      chip.onclick = ()=>{
+        const chips = chatOptions.querySelectorAll('.chat-chip');
+        const isCorrect = opt === step.correct;
+        if(isCorrect){
+          chips.forEach(c=>c.disabled=true);
+          chip.classList.add('correct');
+          addBubble(`${step.before}<span class="blank-fill">${opt}</span> ${step.after}`, 'me');
+          document.getElementById(`chatDot${chatIdx}`).classList.add('done');
+          chatIdx++;
+          setTimeout(renderChatStep, 500);
+        } else {
+          chip.classList.add('wrong');
+          chip.disabled = true;
+        }
+      };
+      chatOptions.appendChild(chip);
+    });
+  }, 650);
+}
+renderChatStep();
+
+/* =========================================================
+   EJERCICIO 4: BANCO DE PALABRAS
+========================================================= */
+const wbData = [
+  {parts:["Ricardo está conversando con ", "___", " amigo de la infancia."], answer:"un"},
+  {parts:["Nosotros estamos en la fiesta con ", "___", " amigos."], answer:"unos"},
+  {parts:["Ella tomó ", "___", " taxi para ir al aeropuerto."], answer:"un"},
+  {parts:["Ellos tienen ", "___", " camisas muy bonitas."], answer:"unas"},
+  {parts:["", "___", " restaurante está cerrado."], answer:"El"},
+  {parts:["Mi escuela tiene ", "___", " mejores estudiantes."], answer:"los"}
+];
+const wbBankWords = shuffle(["un","un","unos","unas","El","los","la","las","al","del"]);
+const wbSentencesEl = document.getElementById('wbSentences');
+const wbBankEl = document.getElementById('wbBank');
+let wbActiveBlank = null;
+
+wbData.forEach((sent, si)=>{
+  const p = document.createElement('div');
+  p.className = 'wb-sentence';
+  sent.parts.forEach(part=>{
+    if(part === '___'){
+      const blankSpan = document.createElement('span');
+      blankSpan.className = 'wb-blank';
+      blankSpan.dataset.sentIdx = si;
+      blankSpan.dataset.answer = sent.answer;
+      blankSpan.textContent = '______';
+      blankSpan.onclick = ()=> selectBlank(blankSpan);
+      p.appendChild(blankSpan);
+    } else if(part){
+      p.appendChild(document.createTextNode(part));
+    }
+  });
+  wbSentencesEl.appendChild(p);
+});
+
+wbBankWords.forEach(word=>{
+  const chip = document.createElement('button');
+  chip.className = 'wb-chip';
+  chip.textContent = word;
+  chip.onclick = ()=> fillActiveBlank(chip);
+  wbBankEl.appendChild(chip);
+});
+
+function selectBlank(blankEl){
+  if(blankEl.classList.contains('filled')){
+    const chip = [...wbBankEl.querySelectorAll('.wb-chip')].find(c=>c.classList.contains('used') && c.textContent===blankEl.textContent);
+    if(chip) chip.classList.remove('used');
+    blankEl.textContent = '______';
+    blankEl.classList.remove('filled','correct','wrong');
+    return;
+  }
+  if(wbActiveBlank) wbActiveBlank.classList.remove('active');
+  wbActiveBlank = blankEl;
+  blankEl.classList.add('active');
+}
+
+function fillActiveBlank(chip){
+  if(chip.classList.contains('used')) return;
+  if(!wbActiveBlank){
+    const nextEmpty = wbSentencesEl.querySelector('.wb-blank:not(.filled)');
+    if(!nextEmpty) return;
+    wbActiveBlank = nextEmpty;
+  }
+  wbActiveBlank.textContent = chip.textContent;
+  wbActiveBlank.classList.add('filled');
+  wbActiveBlank.classList.remove('active','correct','wrong');
+  chip.classList.add('used');
+  wbActiveBlank = null;
+}
+
+function checkWordBank(){
+  const blanks = wbSentencesEl.querySelectorAll('.wb-blank');
+  let correct = 0;
+  blanks.forEach(b=>{
+    b.classList.remove('correct','wrong');
+    if(!b.classList.contains('filled')){ b.classList.add('wrong'); return; }
+    if(normalize(b.textContent) === normalize(b.dataset.answer)){
+      b.classList.add('correct'); correct++;
+    } else {
+      b.classList.add('wrong');
+    }
+  });
+  const fb = document.getElementById('fb4');
+  if(correct === blanks.length){
+    fb.textContent = `Perfect! ${correct}/${blanks.length} correct.`;
+    fb.className = 'feedback good';
+    earnStamp(4);
+  } else {
+    fb.textContent = `${correct}/${blanks.length} correct. Review the blanks in red.`;
+    fb.className = 'feedback bad';
+  }
+}
+
+/* =========================================================
+   EJERCICIO 5: MEMORIA DE ARTÍCULOS (memory match game)
+========================================================= */
+const memoryPairs = [
+  {singular:"el amigo", plural:"los amigos"},
+  {singular:"la clase", plural:"las clases"},
+  {singular:"el zapato", plural:"los zapatos"},
+  {singular:"la periodista", plural:"las periodistas"},
+  {singular:"el taxi", plural:"los taxis"},
+  {singular:"el restaurante", plural:"los restaurantes"}
+];
+let memoryCards = [];
+memoryPairs.forEach((pair, i)=>{
+  memoryCards.push({pairId:i, text:pair.singular});
+  memoryCards.push({pairId:i, text:pair.plural});
+});
+memoryCards = shuffle(memoryCards);
+
+let memFlipped = [];
+let memMatches = 0;
+let memMoves = 0;
+let memLock = false;
+const memoryGrid = document.getElementById('memoryGrid');
+
+memoryCards.forEach((cardData, idx)=>{
+  const card = document.createElement('div');
+  card.className = 'memory-card';
+  card.dataset.idx = idx;
+  card.innerHTML = `
+    <div class="memory-card-inner">
+      <div class="memory-face front">?</div>
+      <div class="memory-face back">${cardData.text}</div>
+    </div>`;
+  card.addEventListener('click', ()=> flipMemoryCard(card, cardData));
+  memoryGrid.appendChild(card);
+});
+
+function flipMemoryCard(card, cardData){
+  if(memLock) return;
+  if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  if(memFlipped.length >= 2) return;
+
+  card.classList.add('flipped');
+  memFlipped.push({card, cardData});
+
+  if(memFlipped.length === 2){
+    memMoves++;
+    document.getElementById('memMoves').textContent = memMoves;
+    memLock = true;
+    const [a, b] = memFlipped;
+    if(a.cardData.pairId === b.cardData.pairId){
+      setTimeout(()=>{
+        a.card.classList.add('matched');
+        b.card.classList.add('matched');
+        memMatches++;
+        document.getElementById('memMatches').textContent = memMatches;
+        memFlipped = [];
+        memLock = false;
+        if(memMatches === memoryPairs.length){
+          const fb = document.getElementById('fb5');
+          fb.textContent = `Cleared the board in ${memMoves} moves! 🧠`;
+          fb.className = 'feedback good';
+          earnStamp(5);
+        }
+      }, 400);
+    } else {
+      a.card.classList.add('mismatch');
+      b.card.classList.add('mismatch');
+      setTimeout(()=>{
+        a.card.classList.remove('flipped','mismatch');
+        b.card.classList.remove('flipped','mismatch');
+        memFlipped = [];
+        memLock = false;
+      }, 800);
+    }
+  }
+}
+</script>
+
+</body>
+</html>
