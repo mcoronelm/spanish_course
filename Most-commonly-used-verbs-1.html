@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>¡Los Verbos! - Most Commonly Used Verbs 1</title>
+  <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="navbad.js" defer></script>
   <style>
     :root {
       --bg-dark: #08090f;
@@ -510,17 +512,25 @@
 
   <div class="bg-grid"></div>
 
-  <!-- Header -->
-  <header>
-    <div class="header-container">
-      <div class="brand">
-        <div class="brand-logo">V</div>
-        <div>
-          <div class="brand-title">¡Los Verbos!</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Verbos más usados 1</div>
-        </div>
-      </div>
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
 
+  <header class="site-header">
+    <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
+    <h1>
+      <a href="index.html" class="logo-link">
+        Mundo <span>ELE</span>
+      </a>
+    </h1>
+    <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
+  </header>
+
+  <div id="navbar-placeholder"></div>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <section class="section-heading lesson-app-heading">
+      <h2>¡Los Verbos!</h2>
+      <p>Verbos más usados 1</p>
       <div class="stats-bar">
         <div class="stat-item">
           <span>🔥</span>
@@ -532,11 +542,7 @@
           <span class="stat-val" id="xp-count">0 XP</span>
         </div>
       </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main>
+    </section>
     <!-- Navigation Tabs -->
     <div class="tabs-nav">
       <button class="tab-btn active" onclick="switchTab('flashcards')">🎴 Flashcards</button>
@@ -706,6 +712,14 @@
       </div>
     </div>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p class="credit">Moises Coronel <span>·</span> Spanish Course</p>
+  </footer>
 
   <script>
     // --- Vocabulary: Verbos más usados 1 ---
