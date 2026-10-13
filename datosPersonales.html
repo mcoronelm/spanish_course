@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Datos Personales! - Presentarse en español</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="navbad.js" defer></script>
+  <style>
+    :root {
+      --bg-dark: #08090f;
+      --bg-card: #10121d;
+      --bg-card-hover: #161928;
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --accent-purple: #7f00ff;
+      --accent-pink: #ff007f;
+      --accent-green: #00ff87;
+      --accent-amber: #ffb800;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(127, 0, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.03) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    /* Ambient Grid Background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header & Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(8, 9, 15, 0.75);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem 1.5rem;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #fff, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    /* Navigation Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+      scrollbar-width: none;
+    }
+
+    .tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(127, 0, 255, 0.15));
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+    }
+
+    /* Spotlight Card Effect */
+    .spotlight-card {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(0, 242, 254, 0.25),
+        transparent 40%
+      );
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+
+    .spotlight-card-content {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: 19px;
+      padding: 1.75rem;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Section Views */
+    .view-panel {
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard View */
+    .deck-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .pill.active {
+      background: var(--accent-cyan);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent-cyan);
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      max-width: 500px;
+      height: 320px;
+      margin: 2rem auto;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #121526, #0b0d18);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      border-color: rgba(127, 0, 255, 0.3);
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--accent-cyan);
+    }
+
+    .card-word {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      line-height: 1.25;
+    }
+
+    .card-example {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .card-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .btn-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-circle:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      transform: scale(1.08);
+    }
+
+    /* Grid Layout for Games */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Quiz Option Buttons */
+    .quiz-options {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1rem;
+      color: var(--text-main);
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quiz-btn:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 242, 254, 0.05);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(0, 255, 135, 0.15) !important;
+      border-color: var(--accent-green) !important;
+      color: var(--accent-green);
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(255, 0, 127, 0.15) !important;
+      border-color: var(--accent-pink) !important;
+      color: var(--accent-pink);
+    }
+
+    /* Sentence Builder Chips */
+    .chip-zone {
+      min-height: 70px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px dashed var(--border-subtle);
+      border-radius: 14px;
+      padding: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 1rem 0;
+    }
+
+    .chip {
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2));
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 0.8rem 1.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Memory Match Grid */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .memory-card {
+      aspect-ratio: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-align: center;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .memory-card.flipped {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .memory-card.matched {
+      background: rgba(0, 255, 135, 0.1);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      visibility: hidden;
+    }
+
+    @media (max-width: 600px) {
+      .memory-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+  <header class="site-header">
+    <div class="eyebrow mono">CURSO DE ESPAÑOL COMO LENGUA EXTRANJERA</div>
+    <h1>
+      <a href="index.html" class="logo-link">
+        Mundo <span>ELE</span>
+      </a>
+    </h1>
+    <p>Aprende español explorando la lengua y la cultura del mundo hispanohablante</p>
+  </header>
+
+  <div id="navbar-placeholder"></div>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <section class="section-heading lesson-app-heading">
+      <h2>¡Datos Personales!</h2>
+      <p>Presentarse: nombre, edad, origen y contacto</p>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span>🔥</span>
+          <span class="stat-val" id="streak-count">1</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: var(--border-subtle);"></div>
+        <div class="stat-item">
+          <span>⚡</span>
+          <span class="stat-val" id="xp-count">0 XP</span>
+        </div>
+      </div>
+    </section>
+    <!-- Navigation Tabs -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchTab('flashcards')">🎴 Flashcards</button>
+      <button class="tab-btn" onclick="switchTab('quiz')">⚡ Speed Quiz</button>
+      <button class="tab-btn" onclick="switchTab('agreement')">🧪 Lab de Conjugación</button>
+      <button class="tab-btn" onclick="switchTab('builder')">🧩 Orden de Palabras</button>
+      <button class="tab-btn" onclick="switchTab('memory')">🧠 Memory Match</button>
+      <button class="tab-btn" onclick="switchTab('rules')">📖 Reglas Gramaticales</button>
+    </div>
+
+    <!-- 1. FLASHCARDS VIEW -->
+    <div id="view-flashcards" class="view-panel active">
+      <div class="deck-controls">
+        <div class="filter-pills">
+          <button class="pill active" onclick="filterDeck('all', this)">Todos (30)</button>
+          <button class="pill" onclick="filterDeck('verbos', this)">Verbos (8)</button>
+          <button class="pill" onclick="filterDeck('preguntas', this)">Preguntas (8)</button>
+          <button class="pill" onclick="filterDeck('datos', this)">Datos y nacionalidades (14)</button>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);" id="card-counter">1 de 30</div>
+      </div>
+
+      <div class="flashcard-wrapper" id="flashcard" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <div class="card-face card-front">
+            <span class="card-tag" id="card-tag-front">Vocabulario</span>
+            <div class="card-word" id="card-word-es">Cargando...</div>
+            <div class="card-example" id="card-ex-es">Ejemplo...</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); opacity: 0.6;">Toca para ver la traducción ↺</div>
+          </div>
+          <div class="card-face card-back">
+            <span class="card-tag" id="card-tag-back">Traducción</span>
+            <div class="card-word" id="card-word-en" style="color: var(--accent-cyan);">Loading...</div>
+            <div class="card-example" id="card-ex-en">English example...</div>
+            <button class="btn-action" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="event.stopPropagation(); speakWord();">🔊 Pronunciar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-nav">
+        <button class="btn-circle" onclick="prevCard()">←</button>
+        <button class="btn-circle" onclick="speakWord()">🔊</button>
+        <button class="btn-circle" onclick="nextCard()">→</button>
+      </div>
+    </div>
+
+    <!-- 2. SPEED QUIZ VIEW -->
+    <div id="view-quiz" class="view-panel">
+      <div class="spotlight-card" style="max-width: 600px; margin: 0 auto;">
+        <div class="spotlight-card-content">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="quiz-progress"></div>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem;">QUIZ RÁPIDO</div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;" id="quiz-question">¿Cómo se dice en español?</h2>
+          
+          <div class="quiz-options" id="quiz-options-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. AGREEMENT LAB VIEW -->
+    <div id="view-agreement" class="view-panel">
+      <div class="spotlight-card" style="max-width: 650px; margin: 0 auto;">
+        <div class="spotlight-card-content">
+          <div style="font-size: 0.8rem; color: var(--accent-purple); font-weight: 700; margin-bottom: 0.5rem;">LABORATORIO DE CONJUGACIÓN</div>
+          <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Conjuga el verbo en presente:</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;" id="lab-prompt">Objetivo...</p>
+
+          <div style="font-size: 1.5rem; font-weight: 700; background: rgba(0,0,0,0.4); padding: 1.25rem; border-radius: 12px; text-align: center; margin-bottom: 1.5rem;">
+            <span id="lab-prefix">Yo</span> 
+            <input type="text" id="lab-input" placeholder="..." style="background: transparent; border: none; border-bottom: 2px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 1.5rem; font-weight: 700; width: 240px; max-width: 70%; text-align: center; outline: none;">
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button class="btn-action" onclick="checkLabAnswer()">Comprobar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. WORD ORDER BUILDER -->
+    <div id="view-builder" class="view-panel">
+      <div class="spotlight-card" style="max-width: 650px; margin: 0 auto;">
+        <div class="spotlight-card-content">
+          <div style="font-size: 0.8rem; color: var(--accent-green); font-weight: 700; margin-bottom: 0.5rem;">ORDEN DE LA ORACIÓN</div>
+          <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Construye la oración en español:</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;" id="builder-target">Traduce...</p>
+
+          <div class="chip-zone" id="builder-dropzone"></div>
+          
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Toca las palabras para agregar:</div>
+          <div class="chip-zone" id="builder-sourcezone" style="border-style: solid; background: transparent;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <button class="pill" onclick="resetBuilder()">Reiniciar</button>
+            <button class="btn-action" onclick="checkBuilderAnswer()">Verificar Orden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. MEMORY MATCH VIEW -->
+    <div id="view-memory" class="view-panel">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.25rem;">Encuentra las Parejas</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Relaciona la palabra en español con su traducción en inglés</p>
+      </div>
+      <div class="memory-grid" id="memory-grid-container"></div>
+    </div>
+
+    <!-- 6. RULES VIEW -->
+    <div id="view-rules" class="view-panel">
+      <div class="grid-2">
+        <div class="spotlight-card">
+          <div class="spotlight-card-content">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 1rem;">1. Llamarse (to be called)</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+              Para decir el nombre usamos el verbo <strong style="color: #fff;">llamarse</strong> con un pronombre (<strong style="color: #fff;">me, te, se</strong>):
+            </p>
+            <ul style="margin: 1rem 0 0 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.8;">
+              <li><b>Me llamo</b> Javi. (My name is Javi.)</li>
+              <li><b>Te llamas</b> Pedro. (Your name is Pedro.)</li>
+              <li><b>Él / Ella se llama</b> Alicia. (His / Her name is Alicia.)</li>
+              <li>¿<b>Cómo te llamas</b>? / ¿<b>Cómo se llama</b> ella?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="spotlight-card">
+          <div class="spotlight-card-content">
+            <h3 style="color: var(--accent-purple); margin-bottom: 1rem;">2. Ser y tener para presentarse</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+              En español usamos <strong style="color: #fff;">ser</strong> para el origen y <strong style="color: #fff;">tener</strong> para la edad:
+            </p>
+            <ul style="margin: 1rem 0 0 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.8;">
+              <li><b>Soy</b> italiano. (I am Italian.)</li>
+              <li><b>Tengo</b> doce años. (I have twelve years → I am twelve.)</li>
+              <li>tú <b>eres</b> / tú <b>tienes</b></li>
+              <li>él, ella <b>es</b> / él, ella <b>tiene</b></li>
+            </ul>
+          </div>
+        </div>
+        <div class="spotlight-card">
+          <div class="spotlight-card-content">
+            <h3 style="color: var(--accent-green); margin-bottom: 1rem;">3. Las preguntas</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+              Las preguntas llevan signos de interrogación al principio <strong style="color: #fff;">¿</strong> y al final <strong style="color: #fff;">?</strong>:
+            </p>
+            <ul style="margin: 1rem 0 0 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.8;">
+              <li><b>¿Cómo</b> te llamas? (How / What)</li>
+              <li><b>¿De dónde</b> eres? (Where from)</li>
+              <li><b>¿Cuántos</b> años tienes? (How many)</li>
+              <li><b>¿Cuál</b> es tu número de teléfono? (Which / What)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="spotlight-card">
+          <div class="spotlight-card-content">
+            <h3 style="color: var(--accent-amber); margin-bottom: 1rem;">4. Nacionalidades y datos de contacto</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+              Algunas nacionalidades cambian según el género; otras no:
+            </p>
+            <ul style="margin: 1rem 0 0 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.8;">
+              <li><b>chino</b> (hombre) / <b>china</b> (mujer)</li>
+              <li><b>italiano</b> / <b>italiana</b></li>
+              <li><b>estadounidense</b> (hombre y mujer)</li>
+              <li><b>@</b> se dice <b>arroba</b>: alicia@hispamail.es</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p class="credit">Moises Coronel <span>·</span> Spanish Course</p>
+  </footer>
+
+  <script>
+    // --- Vocabulary: Datos personales ---
+    const vocabulary = [
+      { es: "llamarse", mainEs: "llamarse", en: "to be called", category: "verbos", tag: "Verbo", exEs: "Me llamo Javi.", exEn: "My name is Javi." },
+      { es: "me llamo", mainEs: "me llamo", en: "I'm called / my name is", category: "verbos", tag: "Verbo", exEs: "Me llamo Javi.", exEn: "My name is Javi." },
+      { es: "te llamas", mainEs: "te llamas", en: "you are called / your name is", category: "verbos", tag: "Verbo", exEs: "¿Cómo te llamas?", exEn: "What's your name?" },
+      { es: "se llama", mainEs: "se llama", en: "he / she is called / his / her name is", category: "verbos", tag: "Verbo", exEs: "Ella se llama Alicia.", exEn: "Her name is Alicia." },
+      { es: "yo soy", mainEs: "yo soy", en: "I am", category: "verbos", tag: "Verbo", exEs: "Yo soy italiano.", exEn: "I am Italian." },
+      { es: "tengo", mainEs: "tengo", en: "I have", category: "verbos", tag: "Verbo", exEs: "Tengo doce años.", exEn: "I am twelve years old." },
+      { es: "tienes", mainEs: "tienes", en: "you have", category: "verbos", tag: "Verbo", exEs: "¿Tienes móvil?", exEn: "Do you have a cell phone?" },
+      { es: "tiene", mainEs: "tiene", en: "he / she has", category: "verbos", tag: "Verbo", exEs: "Pedro tiene correo electrónico.", exEn: "Pedro has an email address." },
+      { es: "¿Cómo te llamas?", mainEs: "¿Cómo te llamas?", en: "What's your name?", category: "preguntas", tag: "Pregunta", exEs: "Me llamo Javi.", exEn: "My name is Javi." },
+      { es: "¿Cómo se llama ella?", mainEs: "¿Cómo se llama ella?", en: "What's her name?", category: "preguntas", tag: "Pregunta", exEs: "Ella se llama Alicia.", exEn: "Her name is Alicia." },
+      { es: "¿De dónde eres?", mainEs: "¿De dónde eres?", en: "Where are you from?", category: "preguntas", tag: "Pregunta", exEs: "Soy italiano.", exEn: "I'm Italian." },
+      { es: "¿Cuántos años tienes?", mainEs: "¿Cuántos años tienes?", en: "How old are you?", category: "preguntas", tag: "Pregunta", exEs: "Tengo doce años.", exEn: "I'm twelve years old." },
+      { es: "¿Cuál es tu número de teléfono?", mainEs: "¿Cuál es tu número de teléfono?", en: "What's your phone number?", category: "preguntas", tag: "Pregunta", exEs: "Es el 914 859 584.", exEn: "It's 914 859 584." },
+      { es: "¿Tienes móvil?", mainEs: "¿Tienes móvil?", en: "Do you have a cell phone?", category: "preguntas", tag: "Pregunta", exEs: "Sí, es el 678 843 679.", exEn: "Yes, it's 678 843 679." },
+      { es: "¿Tienes correo electrónico?", mainEs: "¿Tienes correo electrónico?", en: "Do you have an email address?", category: "preguntas", tag: "Pregunta", exEs: "Sí, alicia@hispamail.es.", exEn: "Yes, alicia@hispamail.es." },
+      { es: "¿Hablas inglés?", mainEs: "¿Hablas inglés?", en: "Do you speak English?", category: "preguntas", tag: "Pregunta", exEs: "Sí, un poco.", exEn: "Yes, a little." },
+      { es: "cuántos", mainEs: "cuántos", en: "how many", category: "datos", tag: "Palabra", exEs: "¿Cuántos años tienes?", exEn: "How old are you?" },
+      { es: "años", mainEs: "años", en: "years", category: "datos", tag: "Palabra", exEs: "Tengo doce años.", exEn: "I'm twelve years old." },
+      { es: "chino / china", mainEs: "chino / china", en: "Chinese (man / woman)", category: "datos", tag: "Nacionalidad", exEs: "Yo soy chino. / Yo soy china.", exEn: "I'm Chinese." },
+      { es: "estadounidense", mainEs: "estadounidense", en: "from the USA (man and woman)", category: "datos", tag: "Nacionalidad", exEs: "Yo soy estadounidense.", exEn: "I'm from the USA." },
+      { es: "italiano / italiana", mainEs: "italiano / italiana", en: "Italian (man / woman)", category: "datos", tag: "Nacionalidad", exEs: "Soy italiano.", exEn: "I'm Italian." },
+      { es: "nombre", mainEs: "nombre", en: "first name", category: "datos", tag: "Datos personales", exEs: "Nombre: Pedro", exEn: "First name: Pedro" },
+      { es: "apellidos", mainEs: "apellidos", en: "last names", category: "datos", tag: "Datos personales", exEs: "Apellidos: Martínez Arroyo", exEn: "Last names: Martínez Arroyo" },
+      { es: "lugar de nacimiento", mainEs: "lugar de nacimiento", en: "place of birth", category: "datos", tag: "Datos personales", exEs: "Lugar de nacimiento: Ronda (Málaga)", exEn: "Place of birth: Ronda (Málaga)" },
+      { es: "fecha de nacimiento", mainEs: "fecha de nacimiento", en: "date of birth", category: "datos", tag: "Datos personales", exEs: "Fecha de nacimiento: 06-05-1994", exEn: "Date of birth: 06-05-1994" },
+      { es: "domicilio", mainEs: "domicilio", en: "home address", category: "datos", tag: "Datos personales", exEs: "Domicilio: C/ Zurbano, 14, Madrid", exEn: "Home address: C/ Zurbano, 14, Madrid" },
+      { es: "correo electrónico", mainEs: "correo electrónico", en: "email", category: "datos", tag: "Datos personales", exEs: "Correo electrónico: pedro@hispamail.com", exEn: "Email: pedro@hispamail.com" },
+      { es: "arroba", mainEs: "arroba", en: "@ (at sign)", category: "datos", tag: "Datos personales", exEs: "@ se dice arroba.", exEn: "@ is said \"arroba\"." },
+      { es: "móvil", mainEs: "móvil", en: "cell phone", category: "datos", tag: "Datos personales", exEs: "¿Tienes móvil?", exEn: "Do you have a cell phone?" },
+      { es: "un poco", mainEs: "un poco", en: "a little", category: "datos", tag: "Palabra", exEs: "Hablo inglés un poco.", exEn: "I speak English a little." }
+    ];
+
+    let filteredDeck = [...vocabulary];
+    let currentCardIdx = 0;
+    let xp = 0;
+
+    // Mouse Light Tracker
+    document.addEventListener('mousemove', (e) => {
+      document.querySelectorAll('.spotlight-card').forEach(card => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(view => view.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`view-${tabId}`).classList.add('active');
+
+      if (tabId === 'quiz') initQuiz();
+      if (tabId === 'agreement') initLab();
+      if (tabId === 'builder') initBuilder();
+      if (tabId === 'memory') initMemory();
+    }
+
+    // Flashcards
+    function updateCardView() {
+      if (filteredDeck.length === 0) return;
+      const card = filteredDeck[currentCardIdx];
+      document.getElementById('card-word-es').innerText = card.es;
+      document.getElementById('card-ex-es').innerText = card.exEs;
+      document.getElementById('card-word-en').innerText = card.en;
+      document.getElementById('card-ex-en').innerText = card.exEn;
+      document.getElementById('card-tag-front').innerText = card.tag;
+      document.getElementById('card-counter').innerText = `${currentCardIdx + 1} de ${filteredDeck.length}`;
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      currentCardIdx = (currentCardIdx + 1) % filteredDeck.length;
+      updateCardView();
+    }
+
+    function prevCard() {
+      currentCardIdx = (currentCardIdx - 1 + filteredDeck.length) % filteredDeck.length;
+      updateCardView();
+    }
+
+    function filterDeck(cat, btnEl) {
+      document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.remove('active'));
+      btnEl.classList.add('active');
+
+      if (cat === 'all') filteredDeck = [...vocabulary];
+      else filteredDeck = vocabulary.filter(v => v.category === cat);
+
+      currentCardIdx = 0;
+      updateCardView();
+    }
+
+    function speakWord() {
+      const card = filteredDeck[currentCardIdx];
+      const utterance = new SpeechSynthesisUtterance(card.mainEs);
+      utterance.lang = 'es-ES';
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Speed Quiz
+    let currentQuizItem = null;
+
+    function initQuiz() {
+      const randomItem = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+      currentQuizItem = randomItem;
+
+      document.getElementById('quiz-question').innerText = `¿Cuál es el significado de "${randomItem.en}"?`;
+
+      const options = [randomItem.es];
+      while (options.length < 4) {
+        const rand = vocabulary[Math.floor(Math.random() * vocabulary.length)].es;
+        if (!options.includes(rand)) options.push(rand);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.innerHTML = `<span>${opt}</span><span>→</span>`;
+        btn.onclick = () => handleQuizAnswer(opt, btn);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('quiz-progress').style.width = `${Math.random() * 80 + 20}%`;
+    }
+
+    function handleQuizAnswer(selected, btn) {
+      if (selected === currentQuizItem.es) {
+        btn.classList.add('correct');
+        addXP(15);
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+        setTimeout(initQuiz, 1000);
+      } else {
+        btn.classList.add('wrong');
+      }
+    }
+
+    // Conjugation lab (present tense)
+    const labChallenges = [
+      { prefix: 'Yo', target: 'me llamo', prompt: 'My name is / I am called (llamarse)' },
+      { prefix: 'Tú', target: 'te llamas', prompt: 'You are called (llamarse)' },
+      { prefix: 'Él', target: 'se llama', prompt: 'He is called (llamarse)' },
+      { prefix: 'Ella', target: 'se llama', prompt: 'She is called (llamarse)' },
+      { prefix: 'Yo', target: 'soy', prompt: 'I am (ser)' },
+      { prefix: 'Tú', target: 'eres', prompt: 'You are (ser)' },
+      { prefix: 'Yo', target: 'tengo', prompt: 'I have (tener)' },
+      { prefix: 'Tú', target: 'tienes', prompt: 'You have (tener)' },
+      { prefix: 'Ella', target: 'tiene', prompt: 'She has (tener)' },
+      { prefix: 'Tú', target: 'hablas', prompt: 'You speak (hablar)' }
+    ];
+    let currentLab = 0;
+
+    function initLab() {
+      const ch = labChallenges[currentLab];
+      document.getElementById('lab-prompt').innerText = `Objetivo: "${ch.prompt}"`;
+      document.getElementById('lab-prefix').innerText = ch.prefix;
+      document.getElementById('lab-input').value = '';
+    }
+
+    function checkLabAnswer() {
+      const val = document.getElementById('lab-input').value.trim().toLowerCase();
+      const target = labChallenges[currentLab].target;
+
+      if (val === target) {
+        addXP(20);
+        confetti({ particleCount: 50, spread: 70 });
+        currentLab = (currentLab + 1) % labChallenges.length;
+        setTimeout(initLab, 800);
+      } else {
+        alert(`¡Casi! La respuesta correcta es "${target}"`);
+      }
+    }
+
+    // Sentence Builder
+    const builderChallenges = [
+      { target: 'My name is Javi', correct: ['Me', 'llamo', 'Javi'], distractors: ['llamas', 'se'] },
+      { target: 'What is your name?', correct: ['¿Cómo', 'te', 'llamas?'], distractors: ['llamo', 'se'] },
+      { target: 'I am Italian', correct: ['Yo', 'soy', 'italiano'], distractors: ['eres', 'tengo'] },
+      { target: 'Where are you from?', correct: ['¿De', 'dónde', 'eres?'], distractors: ['es', 'soy'] },
+      { target: 'How old are you?', correct: ['¿Cuántos', 'años', 'tienes?'], distractors: ['tengo', 'tiene'] },
+      { target: 'I am twelve years old', correct: ['Tengo', 'doce', 'años'], distractors: ['tienes', 'tiene'] },
+      { target: 'Do you speak English?', correct: ['¿Hablas', 'inglés?'], distractors: ['hablo', 'habla'] }
+    ];
+    let currentBuilder = 0;
+    let selectedChips = [];
+
+    function initBuilder() {
+      const ch = builderChallenges[currentBuilder];
+      document.getElementById('builder-target').innerText = `Traduce: "${ch.target}"`;
+      selectedChips = [];
+      renderBuilder();
+    }
+
+    function renderBuilder() {
+      const ch = builderChallenges[currentBuilder];
+      const dropzone = document.getElementById('builder-dropzone');
+      const sourcezone = document.getElementById('builder-sourcezone');
+
+      dropzone.innerHTML = '';
+      selectedChips.forEach((word, idx) => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerText = word;
+        chip.onclick = () => {
+          selectedChips.splice(idx, 1);
+          renderBuilder();
+        };
+        dropzone.appendChild(chip);
+      });
+
+      sourcezone.innerHTML = '';
+      const allWords = [...ch.correct, ...ch.distractors].sort();
+      allWords.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.style.background = 'rgba(255,255,255,0.05)';
+        chip.innerText = word;
+        chip.onclick = () => {
+          selectedChips.push(word);
+          renderBuilder();
+        };
+        sourcezone.appendChild(chip);
+      });
+    }
+
+    function checkBuilderAnswer() {
+      const ch = builderChallenges[currentBuilder];
+      if (JSON.stringify(selectedChips) === JSON.stringify(ch.correct)) {
+        addXP(25);
+        confetti({ particleCount: 60, spread: 80 });
+        currentBuilder = (currentBuilder + 1) % builderChallenges.length;
+        setTimeout(initBuilder, 1000);
+      } else {
+        alert('¡Revisa el orden! En las preguntas, la palabra interrogativa (¿Cómo…? ¿De dónde…? ¿Cuántos…?) va primero.');
+      }
+    }
+
+    function resetBuilder() {
+      selectedChips = [];
+      renderBuilder();
+    }
+
+    // Memory Match
+    function initMemory() {
+      const grid = document.getElementById('memory-grid-container');
+      grid.innerHTML = '';
+
+      const items = [...vocabulary].sort(() => Math.random() - 0.5).slice(0, 6);
+      let cards = [];
+      items.forEach(item => {
+        cards.push({ text: item.mainEs, match: item.en });
+        cards.push({ text: item.en, match: item.mainEs });
+      });
+      cards.sort(() => Math.random() - 0.5);
+
+      let flipped = [];
+
+      cards.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+        card.innerText = '?';
+        card.onclick = () => {
+          if (flipped.length < 2 && !card.classList.contains('flipped')) {
+            card.innerText = c.text;
+            card.classList.add('flipped');
+            flipped.push({ card, data: c });
+
+            if (flipped.length === 2) {
+              if (flipped[0].data.match === flipped[1].data.text) {
+                setTimeout(() => {
+                  flipped[0].card.classList.add('matched');
+                  flipped[1].card.classList.add('matched');
+                  flipped = [];
+                  addXP(10);
+                }, 600);
+              } else {
+                setTimeout(() => {
+                  flipped[0].card.innerText = '?';
+                  flipped[1].card.innerText = '?';
+                  flipped[0].card.classList.remove('flipped');
+                  flipped[1].card.classList.remove('flipped');
+                  flipped = [];
+                }, 1000);
+              }
+            }
+          }
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function addXP(amount) {
+      xp += amount;
+      document.getElementById('xp-count').innerText = `${xp} XP`;
+    }
+
+    updateCardView();
+  </script>
+</body>
+</html>
